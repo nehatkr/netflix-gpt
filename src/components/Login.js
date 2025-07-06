@@ -91,54 +91,66 @@ const Login = () => {
     setIsSignInForm(!isSignInForm);
   };
   return (
-    <div>
+    <div className="min-h-screen">
       <Header />
-      <div className="absolute">
-        <img className="h-screen object-cover md:h-full" src={BG_URL} alt="logo" />
+      <div className="absolute inset-0">
+        <img 
+          className="w-full h-full object-cover" 
+          src={BG_URL} 
+          alt="background" 
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
       </div>
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className=" w-full md:w-3/12 absolute p-12 bg-black my-36 mx-auto right-0 left-0 text-white bg-opacity-80"
-      >
-        <h1 className="md:font-bold text-2lg md:text-3xl py-4">
-          {isSignInForm ? "Sign In" : "Sign Up"}
-        </h1>
-        {!isSignInForm && (
-          <input
-            ref={name}
-            type="text"
-            placeholder="Full Name"
-            className="p-4 my-3 w-full bg-gray-600"
-          />
-        )}
-        <input
-          ref={email}
-          type="text"
-          placeholder="Email Address"
-          className="p-4 my-3 w-full bg-gray-600"
-        />
-
-        <input
-          ref={password}
-          type="password"
-          placeholder="Password"
-          className="p-4 my-2 w-full  bg-gray-600"
-        />
-
-        <p className="text-red-500 font-bold text-lg py-2">{errorMassage}</p>
-
-        <button
-          className="p-4 my-6 bg-red-700 w-full rounded-lg cursor-pointer"
-          onClick={handleButtonClick}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-20">
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-6 sm:p-8 md:p-12 bg-black bg-opacity-80 rounded-lg text-white"
         >
-          {isSignInForm ? "Sign In" : "Sign Up"}
-        </button>
-        <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
-          {isSignInForm
-            ? " New to Netflix? Sign Up Now."
-            : "Already registered? Sign In Now."}
-        </p>
-      </form>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold py-4 text-center">
+            {isSignInForm ? "Sign In" : "Sign Up"}
+          </h1>
+          
+          {!isSignInForm && (
+            <input
+              ref={name}
+              type="text"
+              placeholder="Full Name"
+              className="p-3 sm:p-4 my-2 sm:my-3 w-full bg-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+          )}
+          
+          <input
+            ref={email}
+            type="text"
+            placeholder="Email Address"
+            className="p-3 sm:p-4 my-2 sm:my-3 w-full bg-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+
+          <input
+            ref={password}
+            type="password"
+            placeholder="Password"
+            className="p-3 sm:p-4 my-2 sm:my-3 w-full bg-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+          />
+
+          <p className="text-red-500 font-bold text-sm sm:text-base py-2 text-center min-h-[2rem]">
+            {errorMassage}
+          </p>
+
+          <button
+            className="p-3 sm:p-4 my-4 sm:my-6 bg-red-700 w-full rounded-lg cursor-pointer hover:bg-red-800 transition-colors font-semibold text-base sm:text-lg"
+            onClick={handleButtonClick}
+          >
+            {isSignInForm ? "Sign In" : "Sign Up"}
+          </button>
+          
+          <p className="py-4 cursor-pointer text-center text-sm sm:text-base hover:underline" onClick={toggleSignInForm}>
+            {isSignInForm
+              ? "New to Netflix? Sign Up Now."
+              : "Already registered? Sign In Now."}
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

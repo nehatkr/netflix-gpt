@@ -59,14 +59,14 @@ const Header = () => {
   };
 
   return (
-    <div className="absolute w-screen px-8 py-3 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
-      <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="logo" />
+    <div className="absolute w-full px-4 sm:px-6 md:px-8 py-2 sm:py-3 bg-gradient-to-b from-black z-10 flex flex-col sm:flex-row justify-between items-center">
+      <img className="w-32 sm:w-36 md:w-44 mb-2 sm:mb-0" src={LOGO} alt="logo" />
       {user && (
-        <div className="flex p-2 justify-between">
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-2 sm:gap-3">
           {showGptSearch && (
             <select
-              className="p-2 m-2 bg-gray-700 text-white rounded-lg"
-              onClick={handleLanguageChange}
+              className="px-2 py-1 sm:p-2 text-sm sm:text-base bg-gray-700 text-white rounded-lg"
+              onChange={handleLanguageChange}
             >
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <option key={lang.identifier} value={lang.identifier}>
@@ -77,14 +77,23 @@ const Header = () => {
           )}
 
           <button
-            className="px-4 py-2 my-2 mx-2 rounded-lg bg-purple-700 text-white"
+            className="px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base rounded-lg bg-purple-700 text-white hover:bg-purple-800 transition-colors"
             onClick={handleGptSearchClick}
           >
             {showGptSearch ? "HomePage" : "GPT Search"}
           </button>
-          <img className="hidden md:block w-12 h-12" alt="userIcon" src="{user?.photoURL}" />
-          <button onClick={handleSignOut} className="font-bold text-white">
-            (Sign Out)
+          
+          <img 
+            className="hidden sm:block w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full" 
+            alt="userIcon" 
+            src={user?.photoURL || "https://occ-0-4345-3647.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABXz4LMjJFidX8MxhZ6qro8PBTjmHbxlaLAbk45W1DXbKsAIOwyHQPiMAuUnF1G24CLi7InJHK4Ge4jkXul1xIW49Dr5S7fc.png?r=e6e"} 
+          />
+          
+          <button 
+            onClick={handleSignOut} 
+            className="text-sm sm:text-base font-bold text-white hover:text-gray-300 transition-colors"
+          >
+            Sign Out
           </button>
         </div>
       )}
