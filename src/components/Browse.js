@@ -11,15 +11,15 @@ import { useSelector } from "react-redux";
 
 const Browse = () => {
   const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
+  
+  // Fetch all movie data
   useNowPlayingMovies();
   usePopularMovies();
   useTopRatedMovies();
   useUpcomingMovies();
 
-  useEffect(() => {}, []);
-
   return (
-    <div>
+    <div className="min-h-screen bg-black">
       <Header />
       {showGptSearch ? (
         <GptSearch />
@@ -29,16 +29,8 @@ const Browse = () => {
           <SecondaryContainer />
         </>
       )}
-
-      {/*
-       MainContaine
-       -VideoBackground
-       -videoTitle
-       secondary container
-       -MovieList * n
-       -cards*n
-       r*/}
     </div>
   );
 };
+
 export default Browse;
