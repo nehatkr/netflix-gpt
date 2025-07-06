@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
 import { addNowPlayingMovies } from "../utils/moviesSlice";
 import { useEffect } from "react";
 
@@ -15,10 +15,8 @@ const useNowPlayingMovies = () => {
         return;
       }
 
-      const data = await fetch(
-        "https://api.themoviedb.org/3/movie/now_playing?page=1",
-        API_OPTIONS
-      );
+      const url = buildTMDBUrl("/movie/now_playing?page=1");
+      const data = await fetch(url, API_OPTIONS);
       
       if (!data.ok) {
         throw new Error(`HTTP error! status: ${data.status}`);

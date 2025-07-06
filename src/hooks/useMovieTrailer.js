@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
 import { addTrailerVideo } from "../utils/moviesSlice";
 import { useEffect } from "react";
 
@@ -15,10 +15,8 @@ const useMovieTrailer = (movieId) => {
         return;
       }
 
-      const data = await fetch(
-        `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US`,
-        API_OPTIONS
-      );
+      const url = buildTMDBUrl(`/movie/${movieId}/videos?language=en-US`);
+      const data = await fetch(url, API_OPTIONS);
 
       if (!data.ok) {
         throw new Error(`HTTP error! status: ${data.status}`);
