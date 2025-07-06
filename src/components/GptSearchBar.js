@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import lang from "../utils/languageConstants";
 import { useDispatch, useSelector } from "react-redux";
 import openai from "../utils/openai";
@@ -9,6 +9,7 @@ const GptSearchBar = () => {
   const dispatch = useDispatch();
   const langKey = useSelector((store) => store.config.lang);
   const searchText = useRef(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   // search movies in TMDB
   const searchMovieTMDB = async (movie) => {
@@ -28,8 +29,14 @@ const GptSearchBar = () => {
       return;
     }
 
+    if (!searchText.current.value.trim()) {
+      alert("Please enter a search query.");
+      return;
+    }
+
+    setIsSearching(true);
     console.log(searchText.current.value);
-    // Make an Api call to get the movie results
+    
     const gptQuery =
       "Act as a Movies Recommendation system and suggest some movies for the query: " +
       searchText.current.value +
@@ -54,28 +61,49 @@ const GptSearchBar = () => {
     } catch (error) {
       console.error("Error with GPT search:", error);
       alert("Error occurred during search. Please try again.");
+    } finally {
+      setIsSearching(false);
     }
   };
 
   return (
-    <div className="pt-[10%] sm:pt-[8%] md:pt-[10%] flex justify-center px-4">
-      <form
-        className="w-full max-w-md sm:max-w-lg md:max-w-2xl bg-black bg-opacity-80 grid grid-cols-12 rounded-lg shadow-lg"
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <input
-          ref={searchText}
-          type="text"
-          className="p-3 sm:p-4 m-2 sm:m-4 col-span-8 sm:col-span-9 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500"
-          placeholder={lang[langKey]?.gptSearchPlaceholder}
-        />
-        <button
-          className="col-span-4 sm:col-span-3 py-2 px-2 sm:py-2 sm:px-4 m-2 sm:m-4 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-colors text-sm sm:text-base font-semibold"
-          onClick={handleGptSearchClick}
+    <div className="pt-[10%] sm:pt-[8%] md:pt-[10%] flex justify-center px-4 scale-in">
+      <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-glow mb-2">
+            🤖 AI Movie Search
+          </h1>
+          <p className="text-gray-300 text-sm sm:text-base">
+            Discover your next favorite movie with AI-powered recommendations
+          </p>
+        </div>
+        
+        <form
+          className="glass-dark grid grid-cols-12 rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
+          onSubmit={(e) => e.preventDefault()}
         >
-          {lang[langKey]?.search}
-        </button>
-      </form>
+          <input
+            ref={searchText}
+            type="text"
+            className="p-4 sm:p-5 col-span-8 sm:col-span-9 bg-transparent text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base"
+            placeholder={lang[langKey]?.gptSearchPlaceholder}
+          />
+          <button
+            className="col-span-4 sm:col-span-3 py-2 px-2 sm:py-2 sm:px-4 btn-netflix text-white font-bold text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            onClick={handleGptSearchClick}
+            disabled={isSearching}
+          >
+            {isSearching ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full spinner"></div>
+            ) : (
+              <>
+                <span className="hidden sm:inline">{lang[langKey]?.search}</span>
+                <span className="sm:hidden">🔍</span>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

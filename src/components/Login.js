@@ -14,142 +14,173 @@ import { BG_URL, USER_AVATAR } from "../utils/constants";
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMassage, setErrorMassage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
+    setIsLoading(true);
     // validation the form data
     const message = checkValideData(
       email.current.value,
       password.current.value
-      // name.current.value
     );
 
     setErrorMassage(message);
-    if (message) return;
-    // sign in / sign up
-    if (!isSignInForm) {
-      // sign up logic
-      createUserWithEmailAndPassword(
-        auth,
-        email.current.value,
-        password.current.value
-      )
-        .then((userCredential) => {
-          const user = userCredential.user;
-          updateProfile(user, {
-            displayName: name.current.value,
-            photoURL: USER_AVATAR,
+    if (message) {
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      if (!isSignInForm) {
+        // sign up logic
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email.current.value,
+          password.current.value
+        );
+        const user = userCredential.user;
+        await updateProfile(user, {
+          displayName: name.current.value,
+          photoURL: USER_AVATAR,
+        });
+        const { uid, email: userEmail, displayname, photoURL } = auth.currentUser;
+        dispatch(
+          addUser({
+            uid: uid,
+            email: userEmail,
+            displayname: displayname,
+            photoURL: photoURL,
           })
-            .then(() => {
-              // Profile updated!
-              const { uid, email, displayname, photoURL } = auth.currentUser;
-              dispatch(
-                addUser({
-                  uid: uid,
-                  email: email,
-                  displayname: displayname,
-                  photoURL: photoURL,
-                })
-              );
-            })
-            .catch((error) => {
-              // An error occurred
-              setErrorMassage(error.massage);
-            });
-
-          // console.log(user);
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMassage = error.massage;
-          setErrorMassage(errorCode + "-" + errorMassage);
-        });
-    } else {
-      // sign In logic
-      signInWithEmailAndPassword(
-        auth,
-        email.current.value,
-        password.current.value
-      )
-        .then((userCredential) => {
-          //signed in
-          const user = userCredential.user;
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMassage = error.massage;
-          setErrorMassage(errorCode + "-" + errorMassage);
-        });
+        );
+      } else {
+        // sign In logic
+        await signInWithEmailAndPassword(
+          auth,
+          email.current.value,
+          password.current.value
+        );
+      }
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      setErrorMassage(errorCode + " - " + errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
+    setErrorMassage(null);
   };
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative overflow-hidden">
       <Header />
+      
+      {/* Background with overlay */}
       <div className="absolute inset-0">
         <img 
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover scale-105" 
           src={BG_URL} 
           alt="background" 
         />
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-black/70 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/60"></div>
       </div>
+      
+      {/* Floating particles effect */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500 rounded-full opacity-60 float"></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full opacity-40 float" style={{animationDelay: '1s'}}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-red-400 rounded-full opacity-50 float" style={{animationDelay: '2s'}}></div>
+      </div>
+      
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-20">
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl p-6 sm:p-8 md:p-12 bg-black bg-opacity-80 rounded-lg text-white"
-        >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold py-4 text-center">
-            {isSignInForm ? "Sign In" : "Sign Up"}
-          </h1>
-          
-          {!isSignInForm && (
-            <input
-              ref={name}
-              type="text"
-              placeholder="Full Name"
-              className="p-3 sm:p-4 my-2 sm:my-3 w-full bg-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-            />
-          )}
-          
-          <input
-            ref={email}
-            type="text"
-            placeholder="Email Address"
-            className="p-3 sm:p-4 my-2 sm:my-3 w-full bg-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-
-          <input
-            ref={password}
-            type="password"
-            placeholder="Password"
-            className="p-3 sm:p-4 my-2 sm:my-3 w-full bg-gray-700 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
-          />
-
-          <p className="text-red-500 font-bold text-sm sm:text-base py-2 text-center min-h-[2rem]">
-            {errorMassage}
-          </p>
-
-          <button
-            className="p-3 sm:p-4 my-4 sm:my-6 bg-red-700 w-full rounded-lg cursor-pointer hover:bg-red-800 transition-colors font-semibold text-base sm:text-lg"
-            onClick={handleButtonClick}
+        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg scale-in">
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="p-6 sm:p-8 md:p-12 glass-dark rounded-2xl text-white shadow-2xl border border-white/10"
           >
-            {isSignInForm ? "Sign In" : "Sign Up"}
-          </button>
-          
-          <p className="py-4 cursor-pointer text-center text-sm sm:text-base hover:underline" onClick={toggleSignInForm}>
-            {isSignInForm
-              ? "New to Netflix? Sign Up Now."
-              : "Already registered? Sign In Now."}
-          </p>
-        </form>
+            <div className="text-center mb-8">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-glow mb-2">
+                {isSignInForm ? "Welcome Back" : "Join Netflix"}
+              </h1>
+              <p className="text-gray-300 text-sm sm:text-base">
+                {isSignInForm ? "Sign in to continue watching" : "Create your account to get started"}
+              </p>
+            </div>
+            
+            <div className="space-y-4">
+              {!isSignInForm && (
+                <div className="fade-in">
+                  <input
+                    ref={name}
+                    type="text"
+                    placeholder="Full Name"
+                    className="w-full p-3 sm:p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                  />
+                </div>
+              )}
+              
+              <div className="fade-in">
+                <input
+                  ref={email}
+                  type="email"
+                  placeholder="Email Address"
+                  className="w-full p-3 sm:p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                />
+              </div>
+
+              <div className="fade-in">
+                <input
+                  ref={password}
+                  type="password"
+                  placeholder="Password"
+                  className="w-full p-3 sm:p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
+                />
+              </div>
+            </div>
+
+            {errorMassage && (
+              <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+                <p className="text-red-300 text-sm text-center">{errorMassage}</p>
+              </div>
+            )}
+
+            <button
+              className="w-full mt-6 p-3 sm:p-4 btn-netflix text-white rounded-xl font-semibold text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              onClick={handleButtonClick}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full spinner mr-2"></div>
+                  Processing...
+                </>
+              ) : (
+                isSignInForm ? "Sign In" : "Sign Up"
+              )}
+            </button>
+            
+            <div className="mt-6 text-center">
+              <p className="text-gray-300 text-sm sm:text-base">
+                {isSignInForm ? "New to Netflix? " : "Already have an account? "}
+                <button 
+                  onClick={toggleSignInForm}
+                  className="text-red-400 hover:text-red-300 font-semibold hover:underline transition-colors"
+                >
+                  {isSignInForm ? "Sign up now" : "Sign in"}
+                </button>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
