@@ -10,8 +10,8 @@ const useMovieTrailer = (movieId) => {
   const getMovieVideos = async () => {
     try {
       // Check if TMDB API key is available
-      if (!process.env.REACT_APP_TMDB_KEY) {
-        console.error("TMDB API key is missing");
+      if (!process.env.REACT_APP_TMDB_KEY || process.env.REACT_APP_TMDB_KEY === 'your_actual_tmdb_api_key_here') {
+        console.error("TMDB API key is missing or not configured");
         return;
       }
 
