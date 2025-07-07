@@ -6,18 +6,49 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   
   if (!posterPath) return null;
   
-  const handleCardClick = () => {
+  const handleCardClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (movieId) {
       navigate(`/movie/${movieId}`);
     }
   };
   
+  const handlePlayClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (movieId) {
+      navigate(`/movie/${movieId}`);
+    }
+  };
+
+  const handleAddToListClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Add to list functionality - could be implemented later
+    console.log("Added to list:", title);
+  };
+
+  const handleLikeClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Like functionality - could be implemented later
+    console.log("Liked:", title);
+  };
+  
   return (
     <div 
-      className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow fade-in-stagger"
+      className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow fade-in-stagger transform transition-all duration-500 hover:z-10"
       onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleCardClick(e);
+        }
+      }}
     >
-      <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-900">
+      <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-900 transition-all duration-500 group-hover:shadow-2xl">
         {/* Main poster image */}
         <div className="relative overflow-hidden">
           <img 
@@ -51,7 +82,6 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
                 </span>
               )}
               {year && <span>{year}</span>}
-              }
             </div>
           </div>
           
@@ -59,28 +89,22 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
           <div className="flex items-center justify-center space-x-2">
             <button 
               className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 transform hover:scale-110 shadow-lg group/btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCardClick();
-              }}
+              onClick={handlePlayClick}
+              title="Play Movie"
             >
               <span className="text-black text-xs group-hover/btn:scale-125 transition-transform duration-300">▶️</span>
             </button>
             <button 
               className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Add to list functionality
-              }}
+              onClick={handleAddToListClick}
+              title="Add to List"
             >
               <span className="text-white text-xs group-hover/btn:rotate-180 transition-transform duration-500">+</span>
             </button>
             <button 
               className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Like functionality
-              }}
+              onClick={handleLikeClick}
+              title="Like"
             >
               <span className="text-white text-xs group-hover/btn:scale-125 transition-transform duration-300">👍</span>
             </button>

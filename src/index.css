@@ -26,6 +26,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Global smooth transitions */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Responsive video container */
 .aspect-video {
   aspect-ratio: 16 / 9;
@@ -212,8 +217,9 @@ input:focus, button:focus, select:focus {
 
 /* Enhanced card hover effects */
 .card-hover {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  will-change: transform;
 }
 
 .card-hover::after {
@@ -226,6 +232,7 @@ input:focus, button:focus, select:focus {
   background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   opacity: 0;
   transition: opacity 0.3s ease;
+  border-radius: inherit;
 }
 
 .card-hover:hover::after {
@@ -233,8 +240,9 @@ input:focus, button:focus, select:focus {
 }
 
 .card-hover:hover {
-  transform: translateY(-12px) scale(1.03);
+  transform: translateY(-12px) scale(1.05);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  z-index: 10;
 }
 
 /* Enhanced text glow effect */
@@ -289,7 +297,7 @@ input:focus, button:focus, select:focus {
   animation: typewriter 3s steps(40) 1s forwards, blink 1s infinite;
 }
 
-/* Slide in animations */
+/* Enhanced slide in animations */
 @keyframes slideInLeft {
   from { 
     opacity: 0; 
@@ -335,19 +343,19 @@ input:focus, button:focus, select:focus {
 }
 
 .slide-in-left {
-  animation: slideInLeft 0.8s ease-out;
+  animation: slideInLeft 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide-in-right {
-  animation: slideInRight 0.8s ease-out;
+  animation: slideInRight 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide-in-up {
-  animation: slideInUp 0.8s ease-out;
+  animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slide-in-down {
-  animation: slideInDown 0.8s ease-out;
+  animation: slideInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Custom scrollbar for webkit browsers */
@@ -383,12 +391,13 @@ input:focus, button:focus, select:focus {
 }
 
 .fade-in {
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Staggered fade in for lists */
 .fade-in-stagger {
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
 }
 
 .fade-in-stagger:nth-child(1) { animation-delay: 0.1s; }
@@ -396,6 +405,11 @@ input:focus, button:focus, select:focus {
 .fade-in-stagger:nth-child(3) { animation-delay: 0.3s; }
 .fade-in-stagger:nth-child(4) { animation-delay: 0.4s; }
 .fade-in-stagger:nth-child(5) { animation-delay: 0.5s; }
+.fade-in-stagger:nth-child(6) { animation-delay: 0.6s; }
+.fade-in-stagger:nth-child(7) { animation-delay: 0.7s; }
+.fade-in-stagger:nth-child(8) { animation-delay: 0.8s; }
+.fade-in-stagger:nth-child(9) { animation-delay: 0.9s; }
+.fade-in-stagger:nth-child(10) { animation-delay: 1.0s; }
 
 /* Scale in animation */
 @keyframes scaleIn {
@@ -452,6 +466,37 @@ input:focus, button:focus, select:focus {
     radial-gradient(circle at 75% 75%, rgba(229, 9, 20, 0.1) 0%, transparent 50%);
   background-size: 100px 100px;
   animation: pattern-move 20s linear infinite;
+}
+
+/* Page transition effects */
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pageSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+}
+
+.page-transition-enter {
+  animation: pageSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-transition-exit {
+  animation: pageSlideOut 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Responsive breakpoints helper classes */
@@ -582,4 +627,69 @@ input:focus, button:focus, select:focus {
 
 .movie-card-glow:hover::before {
   opacity: 1;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Smooth focus transitions */
+*:focus {
+  outline: 2px solid rgba(229, 9, 20, 0.5);
+  outline-offset: 2px;
+  transition: outline 0.2s ease;
+}
+
+/* Enhanced button interactions */
+button {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Smooth image loading */
+img {
+  transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"] {
+  opacity: 0;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* Enhanced modal transitions */
+.modal-backdrop {
+  backdrop-filter: blur(10px);
+  transition: backdrop-filter 0.3s ease;
+}
+
+/* Improved accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .text-glow,
+  .text-glow-red {
+    text-shadow: none;
+  }
+  
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid white;
+  }
 }

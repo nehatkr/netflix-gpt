@@ -19,9 +19,21 @@ const MovieDetails = () => {
       try {
         setLoading(true);
         
+        // Check if TMDB API key is available
+        if (!process.env.REACT_APP_TMDB_KEY || process.env.REACT_APP_TMDB_KEY === 'your_actual_tmdb_api_key_here') {
+          console.error("TMDB API key is missing or not configured");
+          setLoading(false);
+          return;
+        }
+        
         // Fetch movie details
         const movieUrl = buildTMDBUrl(`/movie/${movieId}?language=en-US`);
         const movieResponse = await fetch(movieUrl, API_OPTIONS);
+        
+        if (!movieResponse.ok) {
+          throw new Error(`HTTP error! status: ${movieResponse.status}`);
+        }
+        
         const movieData = await movieResponse.json();
         setMovie(movieData);
 
@@ -55,7 +67,11 @@ const MovieDetails = () => {
   }, [movieId]);
 
   const handlePlayTrailer = () => {
-    setShowTrailer(true);
+    if (selectedVideo) {
+      setShowTrailer(true);
+    } else {
+      alert("No trailer available for this movie.");
+    }
   };
 
   const handleVideoSelect = (video) => {
@@ -63,14 +79,18 @@ const MovieDetails = () => {
     setShowTrailer(true);
   };
 
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center page-transition-enter">
         <Header />
-        <div className="text-white text-center relative z-10 pt-20">
+        <div className="text-white text-center relative z-10 pt-20 fade-in">
           <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full spinner mx-auto mb-6"></div>
-          <h2 className="text-2xl font-bold mb-4 text-glow">Loading Movie Details</h2>
-          <p className="text-gray-300">Fetching cinematic information...</p>
+          <h2 className="text-2xl font-bold mb-4 text-glow slide-in-up" style={{animationDelay: '0.3s'}}>Loading Movie Details</h2>
+          <p className="text-gray-300 slide-in-up" style={{animationDelay: '0.5s'}}>Fetching cinematic information...</p>
         </div>
       </div>
     );
@@ -78,13 +98,17 @@ const MovieDetails = () => {
 
   if (!movie) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center page-transition-enter">
         <Header />
-        <div className="text-white text-center pt-20">
-          <h2 className="text-2xl font-bold mb-4">Movie Not Found</h2>
+        <div className="text-white text-center pt-20 fade-in">
+          <h2 className="text-2xl font-bold mb-4 slide-in-down">Movie Not Found</h2>
+          <p className="text-gray-300 mb-6 slide-in-up" style={{animationDelay: '0.3s'}}>
+            The movie you're looking for doesn't exist or couldn't be loaded.
+          </p>
           <button 
-            onClick={() => navigate(-1)}
-            className="btn-netflix px-6 py-3 rounded-lg"
+            onClick={handleBackClick}
+            className="btn-netflix px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 slide-in-up"
+            style={{animationDelay: '0.5s'}}
           >
             Go Back
           </button>
@@ -94,16 +118,16 @@ const MovieDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative">
+    <div className="min-h-screen bg-black text-white relative page-transition-enter">
       <Header />
       
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 fade-in">
         {movie.backdrop_path && (
           <img
             src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
             alt={movie.title}
-            className="w-full h-full object-cover opacity-30"
+            className="w-full h-full object-cover opacity-30 zoom"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30"></div>
@@ -114,8 +138,8 @@ const MovieDetails = () => {
       <div className="relative z-10 pt-20 px-4 sm:px-6 md:px-8 lg:px-12">
         {/* Back Button */}
         <button
-          onClick={() => navigate(-1)}
-          className="mb-6 flex items-center text-white hover:text-red-400 transition-all duration-300 group slide-in-left"
+          onClick={handleBackClick}
+          className="mb-6 flex items-center text-white hover:text-red-400 transition-all duration-300 group slide-in-left hover:scale-105"
         >
           <span className="mr-2 group-hover:-translate-x-1 transition-transform duration-300">←</span>
           <span className="font-semibold">Back to Browse</span>
@@ -123,7 +147,7 @@ const MovieDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Movie Poster */}
-          <div className="lg:col-span-1 fade-in">
+          <div className="lg:col-span-1 fade-in" style={{animationDelay: '0.2s'}}>
             <div className="relative group">
               <img
                 src={movie.poster_path ? `${IMG_CDN_URL}${movie.poster_path}` : '/placeholder-poster.jpg'}
@@ -137,15 +161,17 @@ const MovieDetails = () => {
           {/* Movie Information */}
           <div className="lg:col-span-2 space-y-6 slide-in-right">
             {/* Title and Basic Info */}
-            <div className="fade-in" style={{animationDelay: '0.2s'}}>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-glow-red">
+            <div className="fade-in" style={{animationDelay: '0.4s'}}>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-glow-red slide-in-down">
                 {movie.title}
               </h1>
               {movie.tagline && (
-                <p className="text-xl text-gray-300 italic mb-4">"{movie.tagline}"</p>
+                <p className="text-xl text-gray-300 italic mb-4 slide-in-up" style={{animationDelay: '0.6s'}}>
+                  "{movie.tagline}"
+                </p>
               )}
               
-              <div className="flex flex-wrap items-center gap-4 mb-6">
+              <div className="flex flex-wrap items-center gap-4 mb-6 fade-in-stagger">
                 <div className="flex items-center space-x-2">
                   <span className="text-yellow-400">⭐</span>
                   <span className="font-semibold">{movie.vote_average?.toFixed(1)}/10</span>
@@ -154,22 +180,27 @@ const MovieDetails = () => {
                   <span>📅</span>
                   <span>{new Date(movie.release_date).getFullYear()}</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span>⏱️</span>
-                  <span>{movie.runtime} min</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span>💰</span>
-                  <span>${(movie.budget / 1000000).toFixed(0)}M</span>
-                </div>
+                {movie.runtime && (
+                  <div className="flex items-center space-x-2">
+                    <span>⏱️</span>
+                    <span>{movie.runtime} min</span>
+                  </div>
+                )}
+                {movie.budget > 0 && (
+                  <div className="flex items-center space-x-2">
+                    <span>💰</span>
+                    <span>${(movie.budget / 1000000).toFixed(0)}M</span>
+                  </div>
+                )}
               </div>
 
               {/* Genres */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {movie.genres?.map((genre) => (
+                {movie.genres?.map((genre, index) => (
                   <span
                     key={genre.id}
-                    className="px-3 py-1 bg-red-600/20 border border-red-500/30 rounded-full text-sm font-medium hover:bg-red-600/30 transition-colors duration-300"
+                    className="px-3 py-1 bg-red-600/20 border border-red-500/30 rounded-full text-sm font-medium hover:bg-red-600/30 transition-all duration-300 hover:scale-105 fade-in-stagger"
+                    style={{animationDelay: `${index * 0.1}s`}}
                   >
                     {genre.name}
                   </span>
@@ -178,13 +209,14 @@ const MovieDetails = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-4 fade-in" style={{animationDelay: '0.4s'}}>
+            <div className="flex flex-wrap gap-4 fade-in" style={{animationDelay: '0.8s'}}>
               <button
                 onClick={handlePlayTrailer}
                 className="flex items-center justify-center bg-white text-black px-6 py-3 rounded-lg font-bold hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 shadow-lg group"
+                disabled={!selectedVideo}
               >
                 <span className="mr-2 text-lg group-hover:scale-110 transition-transform duration-300">▶️</span>
-                Play Trailer
+                {selectedVideo ? "Play Trailer" : "No Trailer"}
               </button>
               <button className="flex items-center justify-center bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-all duration-300 transform hover:scale-105 border border-white/30 shadow-lg group">
                 <span className="mr-2 group-hover:scale-110 transition-transform duration-300">+</span>
@@ -197,39 +229,43 @@ const MovieDetails = () => {
             </div>
 
             {/* Overview */}
-            <div className="fade-in" style={{animationDelay: '0.6s'}}>
+            <div className="fade-in" style={{animationDelay: '1s'}}>
               <h3 className="text-xl font-bold mb-3 text-glow">Overview</h3>
               <p className="text-gray-300 leading-relaxed text-lg">
-                {movie.overview}
+                {movie.overview || "No overview available for this movie."}
               </p>
             </div>
 
             {/* Production Info */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 fade-in" style={{animationDelay: '0.8s'}}>
-              <div>
-                <h4 className="font-semibold text-gray-400 mb-2">Production Companies</h4>
-                <div className="space-y-1">
-                  {movie.production_companies?.slice(0, 3).map((company) => (
-                    <p key={company.id} className="text-white">{company.name}</p>
-                  ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 fade-in" style={{animationDelay: '1.2s'}}>
+              {movie.production_companies && movie.production_companies.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-400 mb-2">Production Companies</h4>
+                  <div className="space-y-1">
+                    {movie.production_companies.slice(0, 3).map((company) => (
+                      <p key={company.id} className="text-white">{company.name}</p>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h4 className="font-semibold text-gray-400 mb-2">Languages</h4>
-                <div className="space-y-1">
-                  {movie.spoken_languages?.map((lang) => (
-                    <p key={lang.iso_639_1} className="text-white">{lang.english_name}</p>
-                  ))}
+              )}
+              {movie.spoken_languages && movie.spoken_languages.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-gray-400 mb-2">Languages</h4>
+                  <div className="space-y-1">
+                    {movie.spoken_languages.map((lang) => (
+                      <p key={lang.iso_639_1} className="text-white">{lang.english_name}</p>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Cast Section */}
         {cast.length > 0 && (
-          <div className="mb-12 fade-in" style={{animationDelay: '1s'}}>
-            <h3 className="text-2xl font-bold mb-6 text-glow">Cast</h3>
+          <div className="mb-12 fade-in" style={{animationDelay: '1.4s'}}>
+            <h3 className="text-2xl font-bold mb-6 text-glow slide-in-left">Cast</h3>
             <div className="flex overflow-x-scroll scrollbar-hide custom-scrollbar pb-4 gap-4">
               {cast.map((actor, index) => (
                 <div
@@ -257,13 +293,13 @@ const MovieDetails = () => {
 
         {/* Videos Section */}
         {videos.length > 0 && (
-          <div className="mb-12 fade-in" style={{animationDelay: '1.2s'}}>
-            <h3 className="text-2xl font-bold mb-6 text-glow">Videos & Trailers</h3>
+          <div className="mb-12 fade-in" style={{animationDelay: '1.6s'}}>
+            <h3 className="text-2xl font-bold mb-6 text-glow slide-in-left">Videos & Trailers</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {videos.slice(0, 6).map((video, index) => (
                 <div
                   key={video.id}
-                  className="relative group cursor-pointer fade-in-stagger"
+                  className="relative group cursor-pointer fade-in-stagger transition-all duration-300 hover:scale-105"
                   style={{animationDelay: `${index * 0.1}s`}}
                   onClick={() => handleVideoSelect(video)}
                 >
@@ -272,6 +308,9 @@ const MovieDetails = () => {
                       src={`https://img.youtube.com/vi/${video.key}/maxresdefault.jpg`}
                       alt={video.name}
                       className="w-full h-full object-cover transition-all duration-300 group-hover:scale-110"
+                      onError={(e) => {
+                        e.target.src = `https://img.youtube.com/vi/${video.key}/hqdefault.jpg`;
+                      }}
                     />
                     <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                       <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
@@ -294,11 +333,11 @@ const MovieDetails = () => {
 
       {/* Video Modal */}
       {showTrailer && selectedVideo && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 fade-in">
-          <div className="relative w-full max-w-6xl aspect-video">
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 fade-in modal-backdrop">
+          <div className="relative w-full max-w-6xl aspect-video scale-in">
             <button
               onClick={() => setShowTrailer(false)}
-              className="absolute -top-12 right-0 text-white hover:text-red-400 text-2xl font-bold transition-colors duration-300 z-10"
+              className="absolute -top-12 right-0 text-white hover:text-red-400 text-2xl font-bold transition-all duration-300 z-10 hover:scale-110"
             >
               ✕ Close
             </button>
