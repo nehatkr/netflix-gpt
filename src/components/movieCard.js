@@ -1,10 +1,22 @@
 import { IMG_CDN_URL } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
 
-const MovieCard = ({ posterPath, title, rating, year }) => {
+const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
+  const navigate = useNavigate();
+  
   if (!posterPath) return null;
   
+  const handleCardClick = () => {
+    if (movieId) {
+      navigate(`/movie/${movieId}`);
+    }
+  };
+  
   return (
-    <div className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow fade-in-stagger">
+    <div 
+      className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow fade-in-stagger"
+      onClick={handleCardClick}
+    >
       <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-900">
         {/* Main poster image */}
         <div className="relative overflow-hidden">
@@ -39,19 +51,36 @@ const MovieCard = ({ posterPath, title, rating, year }) => {
                 </span>
               )}
               {year && <span>{year}</span>}
-              }
             </div>
           </div>
           
           {/* Action buttons */}
           <div className="flex items-center justify-center space-x-2">
-            <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 transform hover:scale-110 shadow-lg group/btn">
+            <button 
+              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 transform hover:scale-110 shadow-lg group/btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCardClick();
+              }}
+            >
               <span className="text-black text-xs group-hover/btn:scale-125 transition-transform duration-300">▶️</span>
             </button>
-            <button className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn">
+            <button 
+              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Add to list functionality
+              }}
+            >
               <span className="text-white text-xs group-hover/btn:rotate-180 transition-transform duration-500">+</span>
             </button>
-            <button className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn">
+            <button 
+              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Like functionality
+              }}
+            >
               <span className="text-white text-xs group-hover/btn:scale-125 transition-transform duration-300">👍</span>
             </button>
           </div>
@@ -60,6 +89,11 @@ const MovieCard = ({ posterPath, title, rating, year }) => {
         {/* Floating quality badge */}
         <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
           HD
+        </div>
+        
+        {/* Click indicator */}
+        <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
+          Click to view
         </div>
         
         {/* Hover glow effect */}

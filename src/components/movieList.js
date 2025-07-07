@@ -48,6 +48,7 @@ const MovieList = ({ title, movies }) => {
                 title={movie.title || movie.original_title}
                 rating={movie.vote_average?.toFixed(1)}
                 year={movie.release_date?.split('-')[0]}
+                movieId={movie.id}
               />
             </div>
           ))}
