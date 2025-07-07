@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import openai from "../utils/openai";
 import { API_OPTIONS } from "../utils/constants";
 import { addGptMovieResult } from "../utils/gptSlice";
-import { motion } from "framer-motion";
 
 const GptSearchBar = () => {
   const dispatch = useDispatch();
@@ -100,95 +99,46 @@ const GptSearchBar = () => {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
-
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="pt-[10%] sm:pt-[8%] md:pt-[10%] flex justify-center px-4"
-    >
+    <div className="pt-[10%] sm:pt-[8%] md:pt-[10%] flex justify-center px-4 scale-in">
       <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl">
-        <motion.div 
-          variants={itemVariants}
-          className="text-center mb-8"
-        >
-          <motion.h1 
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-glow mb-2"
-          >
+        <div className="text-center mb-8 fade-in">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-glow mb-2 slide-in-down">
             🤖 AI Movie Search
-          </motion.h1>
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="text-gray-300 text-sm sm:text-base"
-          >
+          </h1>
+          <p className="text-gray-300 text-sm sm:text-base slide-in-up" style={{animationDelay: '0.3s'}}>
             Discover your next favorite movie with AI-powered recommendations
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
         
-        <motion.form
-          variants={itemVariants}
-          className="glass-dark grid grid-cols-12 rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
+        <form
+          className="glass-dark grid grid-cols-12 rounded-2xl shadow-2xl border border-white/10 overflow-hidden slide-in-up"
+          style={{animationDelay: '0.5s'}}
           onSubmit={(e) => e.preventDefault()}
         >
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
+          <input
             ref={searchText}
             type="text"
-            className="p-4 sm:p-5 col-span-8 sm:col-span-9 bg-transparent text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base"
+            className="p-4 sm:p-5 col-span-8 sm:col-span-9 bg-transparent text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base transition-all duration-300 focus:scale-105"
             placeholder={lang[langKey]?.gptSearchPlaceholder}
           />
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="col-span-4 sm:col-span-3 py-2 px-2 sm:py-2 sm:px-4 btn-netflix text-white font-bold text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+          <button
+            className="col-span-4 sm:col-span-3 py-2 px-2 sm:py-2 sm:px-4 btn-netflix text-white font-bold text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all duration-300 hover:scale-105"
             onClick={handleGptSearchClick}
             disabled={isSearching}
           >
             {isSearching ? (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
-              />
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full spinner"></div>
             ) : (
               <>
                 <span className="hidden sm:inline">{lang[langKey]?.search}</span>
                 <span className="sm:hidden">🔍</span>
               </>
             )}
-          </motion.button>
-        </motion.form>
+          </button>
+        </form>
       </div>
-    </motion.div>
+    </div>
   );
 };
 export default GptSearchBar;
