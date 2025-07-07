@@ -39,6 +39,7 @@ const MovieCard = ({ posterPath, title, rating, year }) => {
                 </span>
               )}
               {year && <span>{year}</span>}
+              }
             </div>
           </div>
           
