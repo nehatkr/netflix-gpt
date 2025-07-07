@@ -1,88 +1,189 @@
 import MovieList from "./movieList";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
 const SecondaryContainer = () => {
   const movies = useSelector(store => store.movies);
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    }
+  };
+
   // Enhanced loading state
   if (!movies.nowPlayingMovies) {
     return (
-      <div className="bg-gradient-to-b from-black via-gray-900 to-black min-h-screen flex items-center justify-center relative overflow-hidden">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-gradient-to-b from-black via-gray-900 to-black min-h-screen flex items-center justify-center relative overflow-hidden"
+      >
         {/* Animated background elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-red-500/5 rounded-full blur-xl float"></div>
-          <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-blue-500/5 rounded-full blur-xl float" style={{animationDelay: '1s'}}></div>
-          <div className="absolute bottom-1/4 left-1/3 w-40 h-40 bg-purple-500/5 rounded-full blur-xl float" style={{animationDelay: '2s'}}></div>
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              className={`absolute w-32 h-32 bg-red-500/5 rounded-full blur-xl`}
+              style={{
+                top: `${25 + i * 25}%`,
+                left: `${25 + i * 25}%`,
+              }}
+              animate={{
+                y: [0, -15, 0],
+                scale: [1, 1.1, 1],
+                opacity: [0.05, 0.15, 0.05]
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                delay: i * 1
+              }}
+            />
+          ))}
         </div>
         
-        <div className="text-white text-center relative z-10">
-          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full spinner mx-auto mb-4"></div>
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="text-white text-center relative z-10"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full mx-auto mb-4"
+          />
           <h3 className="text-xl font-bold mb-2 text-glow">Curating Movie Collections</h3>
           <p className="text-gray-400">Discovering the best content for you...</p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     );
   }
   
   return (
-    <div className="bg-gradient-to-b from-black via-gray-900 to-black relative overflow-hidden">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="bg-gradient-to-b from-black via-gray-900 to-black relative overflow-hidden"
+    >
       {/* Background pattern */}
-      <div className="absolute inset-0 pattern-animate opacity-5"></div>
+      <motion.div 
+        animate={{
+          backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+        className="absolute inset-0 pattern-animate opacity-5"
+      />
       
       <div className="mt-0 md:-mt-20 lg:-mt-52 relative z-20 px-4 sm:px-6 md:px-8 lg:px-12 pb-8">
         {/* Section header */}
-        <div className="text-center py-8 slide-in-down">
-          <h2 className="text-2xl md:text-3xl font-bold text-white text-glow mb-2">
+        <motion.div 
+          variants={itemVariants}
+          className="text-center py-8"
+        >
+          <motion.h2 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="text-2xl md:text-3xl font-bold text-white text-glow mb-2"
+          >
             Discover Amazing Content
-          </h2>
-          <p className="text-gray-400 text-lg">
+          </motion.h2>
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-gray-400 text-lg"
+          >
             Handpicked collections just for you
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
         
-        <div className="space-y-8">
+        <motion.div 
+          variants={containerVariants}
+          className="space-y-8"
+        >
           {movies.nowPlayingMovies && (
-            <div className="fade-in" style={{animationDelay: '0.1s'}}>
+            <motion.div variants={itemVariants}>
               <MovieList title={"🔥 Now Playing"} movies={movies.nowPlayingMovies} />
-            </div>
+            </motion.div>
           )}
           {movies.topRatedMovies && (
-            <div className="fade-in" style={{animationDelay: '0.2s'}}>
+            <motion.div variants={itemVariants}>
               <MovieList title={"⭐ Top Rated"} movies={movies.topRatedMovies} />
-            </div>
+            </motion.div>
           )}
           {movies.popularMovies && (
-            <div className="fade-in" style={{animationDelay: '0.3s'}}>
+            <motion.div variants={itemVariants}>
               <MovieList title={"🎭 Popular"} movies={movies.popularMovies} />
-            </div>
+            </motion.div>
           )}
           {movies.upcomingMovies && (
-            <div className="fade-in" style={{animationDelay: '0.4s'}}>
+            <motion.div variants={itemVariants}>
               <MovieList title={"🚀 Upcoming Movies"} movies={movies.upcomingMovies} />
-            </div>
+            </motion.div>
           )}
           {movies.nowPlayingMovies && (
-            <div className="fade-in" style={{animationDelay: '0.5s'}}>
+            <motion.div variants={itemVariants}>
               <MovieList title={"🎬 Netflix Originals"} movies={movies.nowPlayingMovies.slice(0, 10)} />
-            </div>
+            </motion.div>
           )}
           {movies.popularMovies && (
-            <div className="fade-in" style={{animationDelay: '0.6s'}}>
+            <motion.div variants={itemVariants}>
               <MovieList title={"👻 Thriller & Horror"} movies={movies.popularMovies.slice(5, 15)} />
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
         
         {/* Footer section */}
-        <div className="text-center py-12 slide-in-up" style={{animationDelay: '1s'}}>
+        <motion.div 
+          variants={itemVariants}
+          className="text-center py-12"
+        >
           <div className="inline-flex items-center space-x-2 text-gray-500">
-            <div className="w-2 h-2 bg-red-500 rounded-full breathe"></div>
+            {[...Array(2)].map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  scale: [1, 1.2, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: i
+                }}
+                className="w-2 h-2 bg-red-500 rounded-full"
+              />
+            ))}
             <span>More content loading...</span>
-            <div className="w-2 h-2 bg-red-500 rounded-full breathe" style={{animationDelay: '1s'}}></div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

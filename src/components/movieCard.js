@@ -1,31 +1,64 @@
 import { IMG_CDN_URL } from "../utils/constants";
+import { motion } from "framer-motion";
 
 const MovieCard = ({ posterPath, title, rating, year }) => {
   if (!posterPath) return null;
   
   return (
-    <div className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow">
+    <motion.div 
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      whileHover={{ 
+        y: -15, 
+        scale: 1.05,
+        transition: { type: "spring", stiffness: 300 }
+      }}
+      className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 cursor-pointer group movie-card-glow"
+    >
       <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-900">
         {/* Main poster image */}
         <div className="relative overflow-hidden">
-          <img 
-            className="w-full h-auto transition-all duration-700 group-hover:scale-110 group-hover:brightness-110" 
+          <motion.img 
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.6 }}
+            className="w-full h-auto" 
             alt={title || "Movie Poster"} 
             src={IMG_CDN_URL + posterPath} 
             loading="lazy"
           />
           
           {/* Shimmer effect on hover */}
-          <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <motion.div 
+            initial={{ x: "-100%" }}
+            whileHover={{ x: "100%" }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          />
         </div>
         
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"
+        />
         
         {/* Content overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-all duration-500">
+        <motion.div 
+          initial={{ y: "100%" }}
+          whileHover={{ y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="absolute bottom-0 left-0 right-0 p-3"
+        >
           {/* Movie info */}
-          <div className="mb-3">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileHover={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mb-3"
+          >
             {title && (
               <h4 className="text-white text-xs font-semibold mb-1 line-clamp-2 text-glow">
                 {title}
@@ -39,38 +72,62 @@ const MovieCard = ({ posterPath, title, rating, year }) => {
                 </span>
               )}
               {year && <span>{year}</span>}
-              }
             </div>
-          </div>
+          </motion.div>
           
           {/* Action buttons */}
-          <div className="flex items-center justify-center space-x-2">
-            <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 transform hover:scale-110 shadow-lg group/btn">
-              <span className="text-black text-xs group-hover/btn:scale-125 transition-transform duration-300">▶️</span>
-            </button>
-            <button className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn">
-              <span className="text-white text-xs group-hover/btn:rotate-180 transition-transform duration-500">+</span>
-            </button>
-            <button className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn">
-              <span className="text-white text-xs group-hover/btn:scale-125 transition-transform duration-300">👍</span>
-            </button>
-          </div>
-        </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileHover={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex items-center justify-center space-x-2"
+          >
+            <motion.button 
+              whileHover={{ scale: 1.2, rotate: 5 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 shadow-lg group/btn"
+            >
+              <span className="text-black text-xs">▶️</span>
+            </motion.button>
+            <motion.button 
+              whileHover={{ scale: 1.2, rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 border border-white/30 shadow-lg group/btn"
+            >
+              <span className="text-white text-xs">+</span>
+            </motion.button>
+            <motion.button 
+              whileHover={{ scale: 1.2, y: -2 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 border border-white/30 shadow-lg group/btn"
+            >
+              <span className="text-white text-xs">👍</span>
+            </motion.button>
+          </motion.div>
+        </motion.div>
         
         {/* Floating quality badge */}
-        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0 }}
+          whileHover={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold"
+        >
           HD
-        </div>
+        </motion.div>
         
         {/* Hover glow effect */}
-        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" 
-             style={{
-               background: 'linear-gradient(45deg, transparent, rgba(229, 9, 20, 0.1), transparent)',
-               animation: 'shimmer 2s infinite'
-             }}>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0 rounded-xl pointer-events-none"
+          style={{
+            background: 'linear-gradient(45deg, transparent, rgba(229, 9, 20, 0.1), transparent)',
+          }}
+        />
       </div>
-    </div>
+    </motion.div>
   );
 };
 export default MovieCard;

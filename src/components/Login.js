@@ -10,6 +10,7 @@ import { auth } from "../utils/firebase";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BG_URL, USER_AVATAR } from "../utils/constants";
+import { motion } from "framer-motion";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
@@ -79,108 +80,198 @@ const Login = () => {
     setErrorMassage(null);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 50, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const floatingParticles = Array.from({ length: 6 }, (_, i) => (
+    <motion.div
+      key={i}
+      className={`absolute w-${Math.random() > 0.5 ? '2' : '1'} h-${Math.random() > 0.5 ? '2' : '1'} bg-red-500 rounded-full opacity-60`}
+      style={{
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+      }}
+      animate={{
+        y: [0, -20, 0],
+        x: [0, 10, -5, 0],
+        opacity: [0.3, 0.8, 0.3],
+        scale: [1, 1.2, 1]
+      }}
+      transition={{
+        duration: 4 + Math.random() * 2,
+        repeat: Infinity,
+        delay: Math.random() * 2
+      }}
+    />
+  ));
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <Header />
       
       {/* Background with overlay */}
-      <div className="absolute inset-0">
+      <motion.div 
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        className="absolute inset-0"
+      >
         <img 
-          className="w-full h-full object-cover scale-105" 
+          className="w-full h-full object-cover" 
           src={BG_URL} 
           alt="background" 
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black via-black/70 to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/60"></div>
-      </div>
+      </motion.div>
       
       {/* Floating particles effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-red-500 rounded-full opacity-60 float"></div>
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white rounded-full opacity-40 float" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-red-400 rounded-full opacity-50 float" style={{animationDelay: '2s'}}></div>
+        {floatingParticles}
       </div>
       
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 py-20">
-        <div className="w-full max-w-sm sm:max-w-md md:max-w-lg scale-in">
-          <form
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-sm sm:max-w-md md:max-w-lg"
+        >
+          <motion.form
+            variants={itemVariants}
             onSubmit={(e) => e.preventDefault()}
             className="p-6 sm:p-8 md:p-12 glass-dark rounded-2xl text-white shadow-2xl border border-white/10"
           >
-            <div className="text-center mb-8">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-glow mb-2">
+            <motion.div 
+              variants={itemVariants}
+              className="text-center mb-8"
+            >
+              <motion.h1 
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                className="text-2xl sm:text-3xl md:text-4xl font-bold text-glow mb-2"
+              >
                 {isSignInForm ? "Welcome Back" : "Join Netflix"}
-              </h1>
-              <p className="text-gray-300 text-sm sm:text-base">
+              </motion.h1>
+              <motion.p 
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                className="text-gray-300 text-sm sm:text-base"
+              >
                 {isSignInForm ? "Sign in to continue watching" : "Create your account to get started"}
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
             
-            <div className="space-y-4">
+            <motion.div 
+              variants={itemVariants}
+              className="space-y-4"
+            >
               {!isSignInForm && (
-                <div className="fade-in">
-                  <input
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.input
+                    whileFocus={{ scale: 1.02, borderColor: "#ef4444" }}
                     ref={name}
                     type="text"
                     placeholder="Full Name"
                     className="w-full p-3 sm:p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                   />
-                </div>
+                </motion.div>
               )}
               
-              <div className="fade-in">
-                <input
+              <motion.div variants={itemVariants}>
+                <motion.input
+                  whileFocus={{ scale: 1.02, borderColor: "#ef4444" }}
                   ref={email}
                   type="email"
                   placeholder="Email Address"
                   className="w-full p-3 sm:p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                 />
-              </div>
+              </motion.div>
 
-              <div className="fade-in">
-                <input
+              <motion.div variants={itemVariants}>
+                <motion.input
+                  whileFocus={{ scale: 1.02, borderColor: "#ef4444" }}
                   ref={password}
                   type="password"
                   placeholder="Password"
                   className="w-full p-3 sm:p-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300"
                 />
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {errorMassage && (
-              <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg"
+              >
                 <p className="text-red-300 text-sm text-center">{errorMassage}</p>
-              </div>
+              </motion.div>
             )}
 
-            <button
+            <motion.button
+              variants={itemVariants}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               className="w-full mt-6 p-3 sm:p-4 btn-netflix text-white rounded-xl font-semibold text-base sm:text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               onClick={handleButtonClick}
               disabled={isLoading}
             >
               {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full spinner mr-2"></div>
-                  Processing...
-                </>
-              ) : (
-                isSignInForm ? "Sign In" : "Sign Up"
-              )}
-            </button>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full mr-2"
+                />
+              ) : null}
+              {isLoading ? "Processing..." : (isSignInForm ? "Sign In" : "Sign Up")}
+            </motion.button>
             
-            <div className="mt-6 text-center">
+            <motion.div 
+              variants={itemVariants}
+              className="mt-6 text-center"
+            >
               <p className="text-gray-300 text-sm sm:text-base">
                 {isSignInForm ? "New to Netflix? " : "Already have an account? "}
-                <button 
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={toggleSignInForm}
                   className="text-red-400 hover:text-red-300 font-semibold hover:underline transition-colors"
                 >
                   {isSignInForm ? "Sign up now" : "Sign in"}
-                </button>
+                </motion.button>
               </p>
-            </div>
-          </form>
-        </div>
+            </motion.div>
+          </motion.form>
+        </motion.div>
       </div>
     </div>
   );
