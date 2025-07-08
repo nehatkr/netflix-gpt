@@ -171,15 +171,5 @@ const Header = () => {
     </div>
   );
 };
-export default Header;
-            >
-              <span className="relative z-10">Sign Out</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+
 export default Header;
