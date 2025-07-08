@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { API_OPTIONS, buildTMDBUrl, IMG_CDN_URL } from "../utils/constants";
 import Header from "./Header";
 

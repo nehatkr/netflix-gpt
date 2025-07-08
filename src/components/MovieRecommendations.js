@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect, useCallback } from "react";
 import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
 import Header from "./Header";
 import MoviesList from "./movieList";
 
 const MovieRecommendations = () => {
-  const user = useSelector((store) => store.user);
   const [recommendations, setRecommendations] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedGenres, setSelectedGenres] = useState([]);
-  const [genres, setGenres] = useState([]);
 
   const genresList = [
     { id: 28, name: "Action" },
@@ -33,11 +30,7 @@ const MovieRecommendations = () => {
     { id: 37, name: "Western" }
   ];
 
-  useEffect(() => {
-    fetchRecommendations();
-  }, [selectedGenres]);
-
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     setLoading(true);
     try {
       const recommendationCategories = {
@@ -74,7 +67,11 @@ const MovieRecommendations = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedGenres]);
+
+  useEffect(() => {
+    fetchRecommendations();
+  }, [fetchRecommendations]);
 
   const toggleGenre = (genreId) => {
     setSelectedGenres(prev => 

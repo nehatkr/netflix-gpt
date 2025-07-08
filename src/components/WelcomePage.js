@@ -33,7 +33,7 @@ const WelcomePage = () => {
       clearInterval(textInterval);
       clearTimeout(autoNavigate);
     };
-  }, []);
+  }, [navigate]);
 
   const handleGetStarted = () => {
     navigate("/login");
