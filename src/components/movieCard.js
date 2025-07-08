@@ -6,10 +6,9 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   
   if (!posterPath) return null;
   
-  const handleCardClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleCardClick = () => {
     if (movieId) {
+      console.log("Navigating to movie:", movieId); // Debug log
       navigate(`/movie/${movieId}`);
     }
   };
@@ -18,6 +17,7 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
     e.preventDefault();
     e.stopPropagation();
     if (movieId) {
+      console.log("Playing movie:", movieId); // Debug log
       navigate(`/movie/${movieId}`);
     }
   };
@@ -38,35 +38,28 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   
   return (
     <div 
-      className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow fade-in-stagger transform transition-all duration-500 hover:z-10"
+      className="w-28 sm:w-32 md:w-36 lg:w-48 flex-shrink-0 card-hover cursor-pointer group movie-card-glow fade-in-stagger transform transition-all duration-500 hover:z-20 relative"
       onClick={handleCardClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          handleCardClick(e);
-        }
-      }}
     >
-      <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-900 transition-all duration-500 group-hover:shadow-2xl">
+      <div className="relative overflow-hidden rounded-xl shadow-xl bg-gray-900 transition-all duration-500 group-hover:shadow-2xl movie-card-container">
         {/* Main poster image */}
         <div className="relative overflow-hidden">
           <img 
-            className="w-full h-auto transition-all duration-700 group-hover:scale-110 group-hover:brightness-110" 
+            className="w-full h-auto transition-all duration-700 group-hover:scale-110 group-hover:brightness-110 pointer-events-none" 
             alt={title || "Movie Poster"} 
             src={IMG_CDN_URL + posterPath} 
             loading="lazy"
           />
           
           {/* Shimmer effect on hover */}
-          <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         </div>
         
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
         
         {/* Content overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-all duration-500">
+        <div className="absolute bottom-0 left-0 right-0 p-3 transform translate-y-full group-hover:translate-y-0 transition-all duration-500 pointer-events-none group-hover:pointer-events-auto">
           {/* Movie info */}
           <div className="mb-3">
             {title && (
@@ -82,28 +75,27 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
                 </span>
               )}
               {year && <span>{year}</span>}
-              }
             </div>
           </div>
           
           {/* Action buttons */}
           <div className="flex items-center justify-center space-x-2">
             <button 
-              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 transform hover:scale-110 shadow-lg group/btn"
+              className="w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-200 transition-all duration-300 transform hover:scale-110 shadow-lg group/btn pointer-events-auto"
               onClick={handlePlayClick}
               title="Play Movie"
             >
               <span className="text-black text-xs group-hover/btn:scale-125 transition-transform duration-300">▶️</span>
             </button>
             <button 
-              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn"
+              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn pointer-events-auto"
               onClick={handleAddToListClick}
               title="Add to List"
             >
               <span className="text-white text-xs group-hover/btn:rotate-180 transition-transform duration-500">+</span>
             </button>
             <button 
-              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn"
+              className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn pointer-events-auto"
               onClick={handleLikeClick}
               title="Like"
             >
@@ -113,20 +105,19 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
         </div>
         
         {/* Floating quality badge */}
-        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
+        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100 pointer-events-none">
           HD
         </div>
         
         {/* Click indicator */}
-        <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100">
+        <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white text-xs px-2 py-1 rounded-full font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 transform scale-75 group-hover:scale-100 pointer-events-none">
           Click to view
         </div>
         
         {/* Hover glow effect */}
-        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" 
+        <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none movie-card-glow-effect" 
              style={{
                background: 'linear-gradient(45deg, transparent, rgba(229, 9, 20, 0.1), transparent)',
-               animation: 'shimmer 2s infinite'
              }}>
         </div>
       </div>

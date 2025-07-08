@@ -40,7 +40,7 @@ const Header = () => {
         navigate("/browse");
       } else {
         dispatch(removeUser());
-        navigate("/");
+        navigate("/login");
       }
     });
     return () => unsubscribe();
