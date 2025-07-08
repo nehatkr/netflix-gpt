@@ -1,8 +1,10 @@
 import { IMG_CDN_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   const navigate = useNavigate();
+  const user = useSelector((store) => store.user);
   
   if (!posterPath) return null;
   
@@ -25,15 +27,58 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   const handleAddToListClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // Add to list functionality - could be implemented later
-    console.log("Added to list:", title);
+    
+    if (!user) return;
+    
+    const movie = {
+      id: movieId,
+      title,
+      poster_path: posterPath,
+      vote_average: parseFloat(rating),
+      release_date: `${year}-01-01`,
+      dateAdded: new Date().toISOString()
+    };
+    
+    const existingList = JSON.parse(localStorage.getItem(`watchLater_${user.uid}`)) || [];
+    const isAlreadyAdded = existingList.some(item => item.id === movieId);
+    
+    if (!isAlreadyAdded) {
+      const updatedList = [...existingList, movie];
+      localStorage.setItem(`watchLater_${user.uid}`, JSON.stringify(updatedList));
+      console.log("Added to watch later:", title);
+    } else {
+      console.log("Already in watch later:", title);
+    }
   };
 
   const handleLikeClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // Like functionality - could be implemented later
-    console.log("Liked:", title);
+    
+    if (!user) return;
+    
+    const movie = {
+      id: movieId,
+      title,
+      poster_path: posterPath,
+      vote_average: parseFloat(rating),
+      release_date: `${year}-01-01`,
+      dateAdded: new Date().toISOString()
+    };
+    
+    const existingFavorites = JSON.parse(localStorage.getItem(`favorites_${user.uid}`)) || [];
+    const isAlreadyLiked = existingFavorites.some(item => item.id === movieId);
+    
+    if (!isAlreadyLiked) {
+      const updatedFavorites = [...existingFavorites, movie];
+      localStorage.setItem(`favorites_${user.uid}`, JSON.stringify(updatedFavorites));
+      console.log("Added to favorites:", title);
+    } else {
+      // Remove from favorites if already liked
+      const updatedFavorites = existingFavorites.filter(item => item.id !== movieId);
+      localStorage.setItem(`favorites_${user.uid}`, JSON.stringify(updatedFavorites));
+      console.log("Removed from favorites:", title);
+    }
   };
   
   return (
