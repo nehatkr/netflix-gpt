@@ -8,14 +8,13 @@ export const API_OPTIONS = {
   method: "GET",
   headers: {
     accept: "application/json",
+    Authorization: `Bearer ${process.env.REACT_APP_TMDB_KEY}`,
   },
 };
 
 // Helper function to build TMDB URLs with API key
 export const buildTMDBUrl = (endpoint) => {
-  const apiKey = process.env.REACT_APP_TMDB_KEY;
-  const separator = endpoint.includes('?') ? '&' : '?';
-  return `https://api.themoviedb.org/3${endpoint}${separator}api_key=${apiKey}`;
+  return `https://api.themoviedb.org/3${endpoint}`;
 };
 
 export const IMG_CDN_URL = "https://image.tmdb.org/t/p/w500";
