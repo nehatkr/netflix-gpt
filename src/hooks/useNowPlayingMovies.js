@@ -15,7 +15,7 @@ const useNowPlayingMovies = () => {
         return;
       }
 
-      const url = buildTMDBUrl("/movie/now_playing?page=1");
+      const url = buildTMDBUrl("https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1");
       const data = await fetch(url, API_OPTIONS);
       
       if (!data.ok) {
