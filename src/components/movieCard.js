@@ -10,7 +10,6 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   
   const handleCardClick = () => {
     if (movieId) {
-      console.log("Navigating to movie:", movieId); // Debug log
       navigate(`/movie/${movieId}`);
     }
   };
@@ -19,7 +18,6 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
     e.preventDefault();
     e.stopPropagation();
     if (movieId) {
-      console.log("Playing movie:", movieId); // Debug log
       navigate(`/movie/${movieId}`);
     }
   };
@@ -34,8 +32,8 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
       id: movieId,
       title,
       poster_path: posterPath,
-      vote_average: parseFloat(rating),
-      release_date: `${year}-01-01`,
+      vote_average: parseFloat(rating) || 0,
+      release_date: year ? `${year}-01-01` : new Date().toISOString().split('T')[0],
       dateAdded: new Date().toISOString()
     };
     
@@ -45,9 +43,21 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
     if (!isAlreadyAdded) {
       const updatedList = [...existingList, movie];
       localStorage.setItem(`watchLater_${user.uid}`, JSON.stringify(updatedList));
-      console.log("Added to watch later:", title);
+      // Show success feedback
+      const button = e.target.closest('button');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span class="text-green-400">✓</span>';
+      setTimeout(() => {
+        button.innerHTML = originalText;
+      }, 1000);
     } else {
-      console.log("Already in watch later:", title);
+      // Show already added feedback
+      const button = e.target.closest('button');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span class="text-yellow-400">!</span>';
+      setTimeout(() => {
+        button.innerHTML = originalText;
+      }, 1000);
     }
   };
 
@@ -61,23 +71,34 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
       id: movieId,
       title,
       poster_path: posterPath,
-      vote_average: parseFloat(rating),
-      release_date: `${year}-01-01`,
+      vote_average: parseFloat(rating) || 0,
+      release_date: year ? `${year}-01-01` : new Date().toISOString().split('T')[0],
       dateAdded: new Date().toISOString()
     };
     
     const existingFavorites = JSON.parse(localStorage.getItem(`favorites_${user.uid}`)) || [];
     const isAlreadyLiked = existingFavorites.some(item => item.id === movieId);
     
+    const button = e.target.closest('button');
+    const originalText = button.innerHTML;
+    
     if (!isAlreadyLiked) {
       const updatedFavorites = [...existingFavorites, movie];
       localStorage.setItem(`favorites_${user.uid}`, JSON.stringify(updatedFavorites));
-      console.log("Added to favorites:", title);
+      // Show liked feedback
+      button.innerHTML = '<span class="text-red-400">❤️</span>';
+      setTimeout(() => {
+        button.innerHTML = originalText;
+      }, 1000);
     } else {
       // Remove from favorites if already liked
       const updatedFavorites = existingFavorites.filter(item => item.id !== movieId);
       localStorage.setItem(`favorites_${user.uid}`, JSON.stringify(updatedFavorites));
-      console.log("Removed from favorites:", title);
+      // Show removed feedback
+      button.innerHTML = '<span class="text-gray-400">💔</span>';
+      setTimeout(() => {
+        button.innerHTML = originalText;
+      }, 1000);
     }
   };
   
@@ -94,6 +115,9 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
             alt={title || "Movie Poster"} 
             src={IMG_CDN_URL + posterPath} 
             loading="lazy"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/500x750/1a1a1a/666666?text=No+Image';
+            }}
           />
           
           {/* Shimmer effect on hover */}
@@ -116,11 +140,10 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
               {rating && (
                 <span className="flex items-center">
                   <span className="text-yellow-400 mr-1">⭐</span>
-                  {rating}
+                  {parseFloat(rating).toFixed(1)}
                 </span>
               )}
               {year && <span>{year}</span>}
-              }
             </div>
           </div>
           

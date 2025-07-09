@@ -23,9 +23,25 @@ const useMovieTrailer = (movieId) => {
       }
 
       const json = await data.json();
-      const filterData = json.results.filter((video) => video.type === "Trailer");
-      const trailer = filterData.length ? filterData[0] : json.results[0];
-      dispatch(addTrailerVideo(trailer));
+      
+      // Priority order: Trailer > Teaser > Clip > Featurette
+      const videoTypes = ['Trailer', 'Teaser', 'Clip', 'Featurette'];
+      let selectedVideo = null;
+      
+      for (const type of videoTypes) {
+        const videos = json.results.filter((video) => video.type === type && video.site === 'YouTube');
+        if (videos.length > 0) {
+          selectedVideo = videos[0];
+          break;
+        }
+      }
+      
+      // If no specific type found, get the first YouTube video
+      if (!selectedVideo && json.results.length > 0) {
+        selectedVideo = json.results.find(video => video.site === 'YouTube') || json.results[0];
+      }
+      
+      dispatch(addTrailerVideo(selectedVideo));
     } catch (error) {
       console.error("Error fetching movie trailer:", error);
       // Dispatch null to prevent infinite loading
@@ -34,10 +50,12 @@ const useMovieTrailer = (movieId) => {
   };
 
   useEffect(() => {
-    if (!trailerVideo && movieId) {
+    // Always fetch trailer for new movie, clear previous trailer first
+    if (movieId) {
+      dispatch(addTrailerVideo(null)); // Clear previous trailer
       getMovieVideos();
     }
-  }, [movieId]);
+  }, [movieId, dispatch]);
 };
 
 export default useMovieTrailer;

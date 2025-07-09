@@ -39,7 +39,9 @@ const MainContainer = () => {
     );
   }
 
-  const mainMovies = movies[0];
+  // Select a random movie from the first 5 for variety
+  const randomIndex = Math.floor(Math.random() * Math.min(5, movies.length));
+  const mainMovies = movies[randomIndex];
   const { original_title, overview, id } = mainMovies;
 
   return (
