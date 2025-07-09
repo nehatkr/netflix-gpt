@@ -63,7 +63,19 @@ const UserProfile = () => {
       
       <div className="pt-24 px-4 sm:px-6 md:px-8 lg:px-12 max-w-6xl mx-auto">
         {/* Profile Header */}
-        <div className="bg-gradient-to-r from-red-900/20 to-black/50 rounded-2xl p-8 mb-8 backdrop-blur-sm border border-white/10 fade-in">
+        <div className="bg-gradient-to-r from-red-900/20 to-black/50 rounded-2xl p-8 mb-8 backdrop-blur-sm border border-white/10 fade-in relative overflow-hidden">
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+              <defs>
+                <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#grid)" />
+            </svg>
+          </div>
+          
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative group">
               <img
@@ -72,32 +84,50 @@ const UserProfile = () => {
                 className="w-24 h-24 rounded-full border-4 border-red-500 group-hover:scale-110 transition-transform duration-300"
               />
               <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                <span className="text-xs">Change</span>
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
               </div>
             </div>
             
-            <div className="flex-1 text-center md:text-left">
+            <div className="flex-1 text-center md:text-left relative z-10">
               {isEditing ? (
                 <div className="space-y-4">
                   <input
                     type="text"
                     value={formData.displayName}
                     onChange={(e) => setFormData({...formData, displayName: e.target.value})}
-                    className="bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white w-full max-w-md"
+                    className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white w-full max-w-md focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300"
                     placeholder="Display Name"
                   />
                   <div className="flex gap-3">
                     <button
                       onClick={handleUpdateProfile}
                       disabled={isLoading}
-                      className="btn-netflix px-6 py-2 rounded-lg disabled:opacity-50"
+                      className="btn-netflix px-6 py-3 rounded-lg disabled:opacity-50 flex items-center gap-2 hover:scale-105 transition-transform duration-300"
                     >
-                      {isLoading ? "Saving..." : "Save"}
+                      {isLoading ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full spinner"></div>
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Save Changes
+                        </>
+                      )}
                     </button>
                     <button
                       onClick={() => setIsEditing(false)}
-                      className="bg-white/20 hover:bg-white/30 px-6 py-2 rounded-lg transition-colors"
+                      className="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
                     >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
                       Cancel
                     </button>
                   </div>
@@ -110,8 +140,11 @@ const UserProfile = () => {
                   <p className="text-gray-300 mb-4">{user?.email}</p>
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"
+                    className="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2"
                   >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
                     Edit Profile
                   </button>
                 </div>
@@ -122,22 +155,25 @@ const UserProfile = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors fade-in">
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl fade-in group">
             <div className="text-center">
-              <div className="text-3xl font-bold text-red-500 mb-2">{watchHistory.length}</div>
-              <div className="text-gray-300">Movies Watched</div>
+              <div className="text-4xl font-bold text-red-500 mb-2 group-hover:scale-110 transition-transform duration-300">{watchHistory.length}</div>
+              <div className="text-gray-300 font-medium">Movies Watched</div>
+              <div className="text-xs text-gray-500 mt-1">Total viewing history</div>
             </div>
           </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors fade-in" style={{animationDelay: '0.2s'}}>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl fade-in group" style={{animationDelay: '0.2s'}}>
             <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-500 mb-2">{favorites.length}</div>
-              <div className="text-gray-300">Favorites</div>
+              <div className="text-4xl font-bold text-yellow-500 mb-2 group-hover:scale-110 transition-transform duration-300">{favorites.length}</div>
+              <div className="text-gray-300 font-medium">Favorites</div>
+              <div className="text-xs text-gray-500 mt-1">Liked movies</div>
             </div>
           </div>
-          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors fade-in" style={{animationDelay: '0.4s'}}>
+          <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300 hover:scale-105 hover:shadow-xl fade-in group" style={{animationDelay: '0.4s'}}>
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-500 mb-2">Premium</div>
-              <div className="text-gray-300">Account Type</div>
+              <div className="text-4xl font-bold text-blue-500 mb-2 group-hover:scale-110 transition-transform duration-300">Premium</div>
+              <div className="text-gray-300 font-medium">Account Type</div>
+              <div className="text-xs text-gray-500 mt-1">Full access</div>
             </div>
           </div>
         </div>

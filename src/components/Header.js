@@ -56,14 +56,47 @@ const Header = () => {
     dispatch(changeLanguage(e.target.value));
   };
 
+  const navigationItems = [
+    {
+      path: "/profile",
+      label: "My Profile",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      ),
+      description: "Manage your account settings"
+    },
+    {
+      path: "/watchlater",
+      label: "Watch Later",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      description: "Movies saved for later viewing"
+    },
+    {
+      path: "/recommendations",
+      label: "Recommendations",
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+      ),
+      description: "Personalized movie suggestions"
+    }
+  ];
   return (
     <div className="absolute w-full px-4 sm:px-6 md:px-8 py-3 sm:py-4 bg-gradient-to-b from-black/90 via-black/60 to-transparent z-50 flex flex-col sm:flex-row justify-between items-center backdrop-blur-sm slide-in-down">
       {/* Logo with enhanced animation */}
       <div className="mb-2 sm:mb-0 slide-in-left">
         <img 
-          className="w-32 sm:w-36 md:w-44 hover:scale-105 transition-all duration-500 cursor-pointer filter drop-shadow-lg hover:drop-shadow-2xl" 
+          className="w-32 sm:w-36 md:w-44 hover:scale-105 transition-all duration-500 cursor-pointer filter drop-shadow-lg hover:drop-shadow-2xl"
           src={LOGO} 
           alt="Netflix Logo" 
+          onClick={() => navigate("/browse")}
         />
       </div>
       
@@ -110,48 +143,76 @@ const Header = () => {
               
               {/* User Dropdown Menu */}
               {showUserMenu && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-black/90 backdrop-blur-sm border border-white/20 rounded-xl shadow-2xl z-50 fade-in">
+                <div className="absolute right-0 top-full mt-2 w-64 bg-black/95 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl z-50 fade-in overflow-hidden">
+                  {/* User Info Header */}
+                  <div className="p-4 border-b border-white/10 bg-gradient-to-r from-red-900/20 to-transparent">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={user?.photoURL || "https://occ-0-4345-3647.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABXz4LMjJFidX8MxhZ6qro8PBTjmHbxlaLAbk45W1DXbKsAIOwyHQPiMAuUnF1G24CLi7InJHK4Ge4jkXul1xIW49Dr5S7fc.png?r=e6e"}
+                        alt="Profile"
+                        className="w-10 h-10 rounded-full border-2 border-red-500/50"
+                      />
+                      <div>
+                        <h3 className="text-white font-semibold text-sm truncate max-w-32">
+                          {user?.displayname || "Netflix User"}
+                        </h3>
+                        <p className="text-gray-400 text-xs truncate max-w-32">
+                          {user?.email}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Navigation Items */}
                   <div className="p-2">
-                    <button
-                      onClick={() => {
-                        navigate("/profile");
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3"
-                    >
-                      <span>👤</span>
-                      Profile
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/watchlater");
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3"
-                    >
-                      <span>📺</span>
-                      Watch Later
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/recommendations");
-                        setShowUserMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3"
-                    >
-                      <span>🎯</span>
-                      Recommendations
-                    </button>
+                    {navigationItems.map((item, index) => (
+                      <button
+                        key={item.path}
+                        onClick={() => {
+                          navigate(item.path);
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-white hover:bg-white/10 rounded-xl transition-all duration-300 flex items-center gap-3 group hover:scale-105 hover:shadow-lg"
+                        style={{animationDelay: `${index * 0.1}s`}}
+                      >
+                        <div className="text-gray-400 group-hover:text-red-400 transition-colors duration-300">
+                          {item.icon}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-medium group-hover:text-red-400 transition-colors duration-300">
+                            {item.label}
+                          </div>
+                          <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors duration-300">
+                            {item.description}
+                          </div>
+                        </div>
+                        <div className="text-gray-600 group-hover:text-red-400 transition-all duration-300 transform group-hover:translate-x-1">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      </button>
+                    ))}
+                    
                     <hr className="border-white/20 my-2" />
+                    
+                    {/* Sign Out Button */}
                     <button 
                       onClick={() => {
                         handleSignOut();
                         setShowUserMenu(false);
                       }}
-                      className="w-full text-left px-4 py-3 text-red-400 hover:text-red-300 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-3"
+                      className="w-full text-left px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all duration-300 flex items-center gap-3 group hover:scale-105"
                     >
-                      <span>🚪</span>
-                      Sign Out
+                      <div className="text-red-400 group-hover:text-red-300 transition-colors duration-300">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium">Sign Out</div>
+                        <div className="text-xs text-red-500/70">End your session</div>
+                      </div>
                     </button>
                   </div>
                 </div>
