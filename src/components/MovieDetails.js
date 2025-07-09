@@ -30,6 +30,8 @@ const MovieDetails = () => {
         const movieResponse = await fetch(movieUrl, API_OPTIONS);
         
         if (!movieResponse.ok) {
+          const errorText = await movieResponse.text();
+          console.error(`TMDB API Error: ${movieResponse.status} - ${errorText}`);
           throw new Error(`HTTP error! status: ${movieResponse.status}`);
         }
         
@@ -39,6 +41,11 @@ const MovieDetails = () => {
         // Fetch movie videos (trailers, teasers)
         const videosUrl = buildTMDBUrl(`/movie/${movieId}/videos?language=en-US`);
         const videosResponse = await fetch(videosUrl, API_OPTIONS);
+        
+        if (!videosResponse.ok) {
+          console.error(`Error fetching videos: ${videosResponse.status}`);
+          setVideos([]);
+        } else {
         const videosData = await videosResponse.json();
         setVideos(videosData.results || []);
 
@@ -46,12 +53,19 @@ const MovieDetails = () => {
         const trailer = videosData.results?.find(video => video.type === "Trailer");
         const teaser = videosData.results?.find(video => video.type === "Teaser");
         setSelectedVideo(trailer || teaser || videosData.results?.[0]);
+        }
 
         // Fetch cast information
         const creditsUrl = buildTMDBUrl(`/movie/${movieId}/credits?language=en-US`);
         const creditsResponse = await fetch(creditsUrl, API_OPTIONS);
+        
+        if (!creditsResponse.ok) {
+          console.error(`Error fetching credits: ${creditsResponse.status}`);
+          setCast([]);
+        } else {
         const creditsData = await creditsResponse.json();
         setCast(creditsData.cast?.slice(0, 10) || []);
+        }
 
       } catch (error) {
         console.error("Error fetching movie details:", error);

@@ -16,6 +16,7 @@ const useUpcomingMovies = () => {
       // Check if TMDB API key is available
       if (!process.env.REACT_APP_TMDB_KEY || process.env.REACT_APP_TMDB_KEY === 'your_actual_tmdb_api_key_here') {
         console.error("TMDB API key is missing or not configured");
+        dispatch(addUpcomingMovies([]));
         return;
       }
 
@@ -23,6 +24,8 @@ const useUpcomingMovies = () => {
       const data = await fetch(url, API_OPTIONS);
 
       if (!data.ok) {
+        const errorText = await data.text();
+        console.error(`TMDB API Error: ${data.status} - ${errorText}`);
         throw new Error(`HTTP error! status: ${data.status}`);
       }
 
