@@ -15,7 +15,7 @@ export const API_OPTIONS = {
 // Debug function to check if API key is available
 export const checkTMDBKey = () => {
   const key = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
-  if (!key || key === 'your_actual_tmdb_access_token_here') {
+  if (!key || key === API_OPTIONS) {
     console.error('TMDB API key is missing or not configured properly');
     return false;
   }
