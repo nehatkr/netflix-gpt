@@ -394,6 +394,89 @@ input:focus, button:focus, select:focus {
   animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Smooth view transitions */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%) scale(0.95);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.95);
+  }
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-out-to-left {
+  animation: slideOutToLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-out-to-right {
+  animation: slideOutToRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced transition utilities */
+.transition-smooth {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-smooth-fast {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Background image transition fix */
+.bg-transition {
+  transition: background-image 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+/* Prevent background flicker */
+.bg-stable {
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
 /* Staggered fade in for lists */
 .fade-in-stagger {
   animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);

@@ -100,30 +100,29 @@ const GptSearchBar = () => {
   };
 
   return (
-    <div className="pt-[10%] sm:pt-[8%] md:pt-[10%] flex justify-center px-4 scale-in">
+    <div className="pt-[10%] sm:pt-[8%] md:pt-[10%] flex justify-center px-4 transition-all duration-500 ease-out">
       <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl">
-        <div className="text-center mb-8 fade-in">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-glow mb-2 slide-in-down">
+        <div className="text-center mb-8 transition-all duration-500">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white text-glow mb-2 transition-all duration-500">
             🤖 AI Movie Search
           </h1>
-          <p className="text-gray-300 text-sm sm:text-base slide-in-up" style={{animationDelay: '0.3s'}}>
+          <p className="text-gray-300 text-sm sm:text-base transition-all duration-500 delay-150">
             Discover your next favorite movie with AI-powered recommendations
           </p>
         </div>
         
         <form
-          className="glass-dark grid grid-cols-12 rounded-2xl shadow-2xl border border-white/10 overflow-hidden slide-in-up"
-          style={{animationDelay: '0.5s'}}
+          className="glass-dark grid grid-cols-12 rounded-2xl shadow-2xl border border-white/10 overflow-hidden transition-all duration-500 delay-300 hover:shadow-3xl hover:border-white/20"
           onSubmit={(e) => e.preventDefault()}
         >
           <input
             ref={searchText}
             type="text"
-            className="p-4 sm:p-5 col-span-8 sm:col-span-9 bg-transparent text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base transition-all duration-300 focus:scale-105"
+            className="p-4 sm:p-5 col-span-8 sm:col-span-9 bg-transparent text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base transition-all duration-300 focus:bg-white/5"
             placeholder={lang[langKey]?.gptSearchPlaceholder}
           />
           <button
-            className="col-span-4 sm:col-span-3 py-2 px-2 sm:py-2 sm:px-4 btn-netflix text-white font-bold text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all duration-300 hover:scale-105"
+            className="col-span-4 sm:col-span-3 py-2 px-2 sm:py-2 sm:px-4 btn-netflix text-white font-bold text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-lg"
             onClick={handleGptSearchClick}
             disabled={isSearching}
           >
