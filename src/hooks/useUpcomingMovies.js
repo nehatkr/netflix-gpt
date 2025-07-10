@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, checkTMDBKey } from "../utils/constants";
 import { addUpcomingMovies } from "../utils/moviesSlice";
 import { useEffect } from "react";
 
@@ -12,17 +12,26 @@ const useUpcomingMovies = () => {
   );
 
   const getUpcomingMovies = async () => {
+    // Check if API key is available
+    if (!checkTMDBKey()) {
+      console.warn("TMDB API key not available, skipping upcoming movies fetch");
+      dispatch(addUpcomingMovies([]));
+      return;
+    }
+
     try {
       const url = buildTMDBUrl("/movie/upcoming?page=1");
+      console.log('Fetching upcoming movies from:', url);
       const data = await fetch(url, API_OPTIONS);
 
       if (!data.ok) {
-        const errorText = await data.text();
-        console.error(`TMDB API Error: ${data.status} - ${errorText}`);
-        throw new Error(`HTTP error! status: ${data.status}`);
+        console.error(`TMDB API Error: ${data.status} ${data.statusText}`);
+        dispatch(addUpcomingMovies([]));
+        return;
       }
 
       const json = await data.json();
+      console.log('Upcoming movies fetched successfully:', json.results?.length || 0, 'movies');
       dispatch(addUpcomingMovies(json.results));
     } catch (error) {
       console.error("Error fetching upcoming movies:", error);

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, checkTMDBKey } from "../utils/constants";
 import { addTrailerVideo } from "../utils/moviesSlice";
 import { useEffect } from "react";
 
@@ -8,12 +8,20 @@ const useMovieTrailer = (movieId) => {
   const trailerVideo = useSelector((store) => store.movies.trailerVideo);
 
   const getMovieVideos = async () => {
+    // Check if API key is available
+    if (!checkTMDBKey()) {
+      console.warn("TMDB API key not available, skipping trailer fetch");
+      dispatch(addTrailerVideo(null));
+      return;
+    }
+
     try {
       const url = buildTMDBUrl(`/movie/${movieId}/videos?language=en-US`);
+      console.log('Fetching movie trailer from:', url);
       const data = await fetch(url, API_OPTIONS);
 
       if (!data.ok) {
-        console.error(`TMDB API Error: ${data.status}. No trailer available.`);
+        console.error(`TMDB API Error: ${data.status} ${data.statusText}. No trailer available.`);
         dispatch(addTrailerVideo(null));
         return;
       }
@@ -38,6 +46,7 @@ const useMovieTrailer = (movieId) => {
       }
       
       dispatch(addTrailerVideo(selectedVideo));
+      console.log('Movie trailer fetched successfully:', selectedVideo?.name || 'No trailer found');
     } catch (error) {
       console.error("Error fetching movie trailer:", error);
       dispatch(addTrailerVideo(null));
