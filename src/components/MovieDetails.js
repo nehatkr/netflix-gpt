@@ -19,12 +19,6 @@ const MovieDetails = () => {
         setLoading(true);
         
         // Check if TMDB API key is available
-        if (!process.env.REACT_APP_TMDB_KEY || process.env.REACT_APP_TMDB_KEY === 'your_actual_tmdb_api_key_here') {
-          console.error("TMDB API key is missing or not configured");
-          setLoading(false);
-          return;
-        }
-        
         // Fetch movie details
         const movieUrl = buildTMDBUrl(`/movie/${movieId}?language=en-US`);
         const movieResponse = await fetch(movieUrl, API_OPTIONS);

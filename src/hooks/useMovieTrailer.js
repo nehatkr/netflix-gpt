@@ -9,20 +9,11 @@ const useMovieTrailer = (movieId) => {
 
   const getMovieVideos = async () => {
     try {
-      // Check if TMDB API key is available
-      if (!process.env.REACT_APP_TMDB_KEY || 
-          process.env.REACT_APP_TMDB_KEY === 'your_actual_tmdb_api_key_here' ||
-          process.env.REACT_APP_TMDB_KEY.includes('example_jwt_token_here')) {
-        console.warn("TMDB API key is missing or not configured. No trailer available.");
-        dispatch(addTrailerVideo(null));
-        return;
-      }
-
       const url = buildTMDBUrl(`/movie/${movieId}/videos?language=en-US`);
       const data = await fetch(url, API_OPTIONS);
 
       if (!data.ok) {
-        console.warn(`TMDB API unavailable (${data.status}). No trailer available.`);
+        console.error(`TMDB API Error: ${data.status}. No trailer available.`);
         dispatch(addTrailerVideo(null));
         return;
       }
@@ -48,7 +39,7 @@ const useMovieTrailer = (movieId) => {
       
       dispatch(addTrailerVideo(selectedVideo));
     } catch (error) {
-      console.warn("TMDB API unavailable. No trailer available.");
+      console.error("Error fetching movie trailer:", error);
       dispatch(addTrailerVideo(null));
     }
   };
