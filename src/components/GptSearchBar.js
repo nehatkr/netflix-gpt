@@ -14,7 +14,7 @@ const GptSearchBar = () => {
   // search movies in TMDB
   const searchMovieTMDB = async (movie) => {
     try {
-      const url = buildTMDBUrl(`/search/movie?query=${encodeURIComponent(movie)}&include_adult=false&language=en-US&page=1`);
+      const url =`/search/movie?query=${encodeURIComponent(movie)}&include_adult=false&language=en-US&page=1;
       console.log('Searching movie in TMDB:', url.replace(/api_key=[^&]+/, 'api_key=***'));
       
       const response = await fetch(url, API_OPTIONS);
