@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, checkTMDBKey, TMDB_ERROR_CODES } from "../utils/constants";
 import Header from "./Header";
 import MoviesList from "./movieList";
 
@@ -32,6 +32,15 @@ const MovieRecommendations = () => {
 
   const fetchRecommendations = useCallback(async () => {
     setLoading(true);
+    
+    // Check if TMDB API key is configured
+    if (!checkTMDBKey()) {
+      console.error("TMDB API key not configured. Please add REACT_APP_TMDB_API_KEY to your .env file");
+      console.error("Get your API key from: https://www.themoviedb.org/settings/api");
+      setLoading(false);
+      return;
+    }
+    
     try {
       const recommendationCategories = {
         "Trending Now": "/trending/movie/week",
@@ -50,10 +59,23 @@ const MovieRecommendations = () => {
       for (const [category, endpoint] of Object.entries(recommendationCategories)) {
         try {
           const url = buildTMDBUrl(endpoint);
+          console.log(`Fetching ${category} from:`, url.replace(/api_key=[^&]+/, 'api_key=***'));
           const response = await fetch(url, API_OPTIONS);
+          
           if (response.ok) {
             const data = await response.json();
             results[category] = data.results?.slice(0, 20) || [];
+          } else {
+            const errorData = await response.json().catch(() => ({}));
+            const errorCode = errorData.status_code;
+            const errorMessage = errorData.status_message || `HTTP ${response.status}`;
+            
+            if (errorCode && TMDB_ERROR_CODES[errorCode]) {
+              console.error(`TMDB API Error for ${category} - ${errorCode}: ${TMDB_ERROR_CODES[errorCode]}`);
+            } else {
+              console.error(`TMDB API Error for ${category}: ${errorMessage}`);
+            }
+            results[category] = [];
           }
         } catch (error) {
           console.error(`Error fetching ${category}:`, error);

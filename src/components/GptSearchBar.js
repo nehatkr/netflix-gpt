@@ -14,14 +14,18 @@ const GptSearchBar = () => {
   // search movies in TMDB
   const searchMovieTMDB = async (movie) => {
     try {
-      const data = await fetch(
-        "https://api.themoviedb.org/3/search/movie?query=" +
-          movie +
-          "&include_adult=false&language=en-US&page=1",
-        API_OPTIONS
-      );
-      const json = await data.json();
-      return json.results;
+      const url = buildTMDBUrl(`/search/movie?query=${encodeURIComponent(movie)}&include_adult=false&language=en-US&page=1`);
+      console.log('Searching movie in TMDB:', url.replace(/api_key=[^&]+/, 'api_key=***'));
+      
+      const response = await fetch(url, API_OPTIONS);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error(`TMDB Search Error: ${data.status_message || response.status}`);
+        return [];
+      }
+      
+      return data.results || [];
     } catch (error) {
       console.error("Error searching movie in TMDB:", error);
       return [];
