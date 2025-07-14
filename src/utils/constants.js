@@ -8,19 +8,14 @@ export const API_OPTIONS = {
   method: "GET",
   headers: {
     accept: "application/json",
-    Authorization: `Bearer ${process.env.REACT_APP_TMDB_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${process.env.REACT_APP_TMDB_ACCESS_TOKEN || ''}`,
   },
 };
 
-// Debug function to check if API key is available
-export const checkTMDBKey = () => {
-  const key = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
-  if (!key || key === API_OPTIONS) {
-    console.error('TMDB API key is missing or not configured properly');
-    return false;
-  }
-  console.log('TMDB API key is configured');
-  return true;
+// Check if TMDB access token is configured
+export const isTMDBConfigured = () => {
+  const token = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
+  return token && token !== 'YOUR_ACTUAL_TMDB_ACCESS_TOKEN_HERE';
 };
 
 // Helper function to build TMDB URLs

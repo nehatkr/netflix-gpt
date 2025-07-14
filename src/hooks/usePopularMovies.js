@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, isTMDBConfigured } from "../utils/constants";
 import { addPolularMovies } from "../utils/moviesSlice";
 import { useEffect } from "react";
 
@@ -12,9 +12,9 @@ const usePopularMovies = () => {
   );
 
   const getPopularMovies = async () => {
-    // Check if API key is available
-    if (!checkTMDBKey()) {
-      console.warn("TMDB API key not available, skipping popular movies fetch");
+    // Check if TMDB is configured
+    if (!isTMDBConfigured()) {
+      console.error("TMDB access token not configured. Please add REACT_APP_TMDB_ACCESS_TOKEN to your .env file");
       dispatch(addPolularMovies([]));
       return;
     }

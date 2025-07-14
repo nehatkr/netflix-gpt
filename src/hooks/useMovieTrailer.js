@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, isTMDBConfigured } from "../utils/constants";
 import { addTrailerVideo } from "../utils/moviesSlice";
 import { useEffect } from "react";
 
@@ -8,9 +8,9 @@ const useMovieTrailer = (movieId) => {
   const trailerVideo = useSelector((store) => store.movies.trailerVideo);
 
   const getMovieVideos = async () => {
-    // Check if API key is available
-    if (!checkTMDBKey()) {
-      console.warn("TMDB API key not available, skipping trailer fetch");
+    // Check if TMDB is configured
+    if (!isTMDBConfigured()) {
+      console.error("TMDB access token not configured. Please add REACT_APP_TMDB_ACCESS_TOKEN to your .env file");
       dispatch(addTrailerVideo(null));
       return;
     }
