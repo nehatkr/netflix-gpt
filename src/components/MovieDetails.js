@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { API_OPTIONS, buildTMDBUrl, IMG_CDN_URL } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, IMG_CDN_URL, checkTMDBKey } from "../utils/constants";
 import Header from "./Header";
 
 const MovieDetails = () => {
@@ -18,7 +18,12 @@ const MovieDetails = () => {
       try {
         setLoading(true);
         
-        // Check if TMDB API key is available
+        // Check if TMDB is configured
+        if (!checkTMDBKey()) {
+          console.error("TMDB access token not configured. Please add REACT_APP_TMDB_ACCESS_TOKEN to your .env file");
+          return;
+        }
+        
         // Fetch movie details
         const movieUrl = buildTMDBUrl(`/movie/${movieId}?language=en-US`);
         const movieResponse = await fetch(movieUrl, API_OPTIONS);

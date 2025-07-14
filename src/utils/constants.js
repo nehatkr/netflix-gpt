@@ -104,3 +104,9 @@ export const SUPPORTED_LANGUAGES = [
 ];
 
 export const OPENAI_KEY = process.env.REACT_APP_OPENAI_KEY;
+
+// Function to check if TMDB is properly configured
+export const checkTMDBKey = () => {
+  const token = process.env.REACT_APP_TMDB_ACCESS_TOKEN;
+  return token && token !== 'YOUR_ACTUAL_TMDB_ACCESS_TOKEN_HERE' && token.trim() !== '';
+};
