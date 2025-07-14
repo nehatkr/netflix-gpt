@@ -5,7 +5,6 @@ import { useEffect } from "react";
 
 const useMovieTrailer = (movieId) => {
   const dispatch = useDispatch();
-  const trailerVideo = useSelector((store) => store.movies.trailerVideo);
 
   const getMovieVideos = async () => {
     // Check if TMDB API key is configured
@@ -78,7 +77,7 @@ const useMovieTrailer = (movieId) => {
       dispatch(addTrailerVideo(null)); // Clear previous trailer
       getMovieVideos();
     }
-  }, [movieId, dispatch]);
+  }, [movieId, dispatch, getMovieVideos]);
 };
 
 export default useMovieTrailer;

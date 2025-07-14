@@ -59,7 +59,7 @@ const usePopularMovies = () => {
     if (!popularMovies) {
       getPopularMovies();
     }
-  }, []);
+  }, [getPopularMovies, popularMovies]);
 };
 
 export default usePopularMovies;

@@ -59,7 +59,7 @@ const useUpcomingMovies = () => {
     if (!upcomingMovies) {
       getUpcomingMovies();
     }
-  }, []);
+  }, [getUpcomingMovies, upcomingMovies]);
 };
 
 export default useUpcomingMovies;

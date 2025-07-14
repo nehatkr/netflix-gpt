@@ -59,7 +59,7 @@ const useTopRatedMovies = () => {
     if (!topRatedMovies) {
       getTopRatedMovies();
     }
-  }, []);
+  }, [getTopRatedMovies, topRatedMovies]);
 };
 
 export default useTopRatedMovies;
