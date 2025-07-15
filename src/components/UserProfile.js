@@ -91,7 +91,7 @@ const UserProfile = () => {
       setMessage({ type: "info", text: "Changes auto-saved" });
       setTimeout(() => setMessage({ type: "", text: "" }), 2000);
     }
-  }, []);
+  }, [preferences, profileData, user?.uid]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -101,7 +101,7 @@ const UserProfile = () => {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [profileData, preferences, unsavedChanges]);
+  }, [profileData, preferences, unsavedChanges, handleAutoSave, user?.uid]);
 
   // Input validation
   const validateField = useCallback((field, value) => {
@@ -156,6 +156,9 @@ const UserProfile = () => {
           validations.confirmPassword = "Passwords do not match";
         }
         break;
+
+      default:
+        return '';
     }
 
     setValidation(prev => ({ ...prev, ...validations }));
