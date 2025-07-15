@@ -80,9 +80,12 @@ const WelcomePage = () => {
         {/* Skip Button */}
         <button
           onClick={handleSkip}
-          className="absolute top-8 right-8 text-white/70 hover:text-white transition-all duration-300 text-sm font-medium hover:scale-110"
+          className="absolute top-4 right-4 sm:top-8 sm:right-8 text-white/70 hover:text-white transition-all duration-300 text-base sm:text-sm font-medium hover:scale-110 bg-black/30 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-full border border-white/20 hover:bg-black/50 active:scale-95 touch-manipulation z-50"
         >
-          Skip →
+          <span className="flex items-center gap-1 sm:gap-2">
+            <span>Skip</span>
+            <span className="text-xs sm:text-sm">→</span>
+          </span>
         </button>
 
         {/* Logo */}
@@ -130,7 +133,7 @@ const WelcomePage = () => {
           {/* CTA Button */}
           <button
             onClick={handleGetStarted}
-            className="welcome-cta-button group"
+            className="welcome-cta-button group touch-manipulation active:scale-95"
           >
             <span className="relative z-10 flex items-center">
               <span className="mr-3 text-xl group-hover:scale-110 transition-transform duration-300">🚀</span>
