@@ -82,6 +82,17 @@ const UserProfile = () => {
     }
   }, [user?.uid]);
 
+  // Auto-save function
+  const handleAutoSave = useCallback(() => {
+    if (user?.uid) {
+      localStorage.setItem(`userProfile_${user.uid}`, JSON.stringify(profileData));
+      localStorage.setItem(`userPreferences_${user.uid}`, JSON.stringify(preferences));
+      setUnsavedChanges(false);
+      setMessage({ type: "info", text: "Changes auto-saved" });
+      setTimeout(() => setMessage({ type: "", text: "" }), 2000);
+    }
+  }, []);
+
   // Auto-save functionality
   useEffect(() => {
     if (unsavedChanges && user?.uid) {
@@ -344,17 +355,6 @@ const UserProfile = () => {
       setMessage({ type: "error", text: "Failed to update profile" });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Auto-save function
-  const handleAutoSave = () => {
-    if (user?.uid) {
-      localStorage.setItem(`userProfile_${user.uid}`, JSON.stringify(profileData));
-      localStorage.setItem(`userPreferences_${user.uid}`, JSON.stringify(preferences));
-      setUnsavedChanges(false);
-      setMessage({ type: "info", text: "Changes auto-saved" });
-      setTimeout(() => setMessage({ type: "", text: "" }), 2000);
     }
   };
 
