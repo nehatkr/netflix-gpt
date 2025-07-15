@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { API_OPTIONS, buildTMDBUrl, IMG_CDN_URL, checkTMDBKey, TMDB_ERROR_CODES } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, IMG_CDN_URL } from "../utils/constants";
 import Header from "./Header";
 
 const MovieDetails = () => {
@@ -18,30 +18,15 @@ const MovieDetails = () => {
       try {
         setLoading(true);
         
-        // Check if TMDB is configured
-        if (!checkTMDBKey()) {
-          console.error("TMDB API key not configured. Please add REACT_APP_TMDB_API_KEY to your .env file");
-          console.error("Get your API key from: https://www.themoviedb.org/settings/api");
-          return;
-        }
-        
+        // Check if TMDB API key is available
         // Fetch movie details
         const movieUrl = buildTMDBUrl(`/movie/${movieId}?language=en-US`);
-        console.log('Fetching movie details from:', movieUrl.replace(/api_key=[^&]+/, 'api_key=***'));
         const movieResponse = await fetch(movieUrl, API_OPTIONS);
         
         if (!movieResponse.ok) {
-          const errorData = await movieResponse.json().catch(() => ({}));
-          const errorCode = errorData.status_code;
-          const errorMessage = errorData.status_message || `HTTP ${movieResponse.status}`;
-          
-          if (errorCode && TMDB_ERROR_CODES[errorCode]) {
-            console.error(`TMDB API Error ${errorCode}: ${TMDB_ERROR_CODES[errorCode]}`);
-          } else {
-            console.error(`TMDB API Error: ${errorMessage}`);
-          }
-          
-          throw new Error(`TMDB API Error: ${errorMessage}`);
+          const errorText = await movieResponse.text();
+          console.error(`TMDB API Error: ${movieResponse.status} - ${errorText}`);
+          throw new Error(`HTTP error! status: ${movieResponse.status}`);
         }
         
         const movieData = await movieResponse.json();
@@ -49,13 +34,10 @@ const MovieDetails = () => {
 
         // Fetch movie videos (trailers, teasers)
         const videosUrl = buildTMDBUrl(`/movie/${movieId}/videos?language=en-US`);
-        console.log('Fetching movie videos from:', videosUrl.replace(/api_key=[^&]+/, 'api_key=***'));
         const videosResponse = await fetch(videosUrl, API_OPTIONS);
         
         if (!videosResponse.ok) {
-          const errorData = await videosResponse.json().catch(() => ({}));
-          const errorCode = errorData.status_code;
-          console.error(`Error fetching videos: ${errorCode ? TMDB_ERROR_CODES[errorCode] : videosResponse.status}`);
+          console.error(`Error fetching videos: ${videosResponse.status}`);
           setVideos([]);
         } else {
         const videosData = await videosResponse.json();
@@ -69,13 +51,10 @@ const MovieDetails = () => {
 
         // Fetch cast information
         const creditsUrl = buildTMDBUrl(`/movie/${movieId}/credits?language=en-US`);
-        console.log('Fetching movie credits from:', creditsUrl.replace(/api_key=[^&]+/, 'api_key=***'));
         const creditsResponse = await fetch(creditsUrl, API_OPTIONS);
         
         if (!creditsResponse.ok) {
-          const errorData = await creditsResponse.json().catch(() => ({}));
-          const errorCode = errorData.status_code;
-          console.error(`Error fetching credits: ${errorCode ? TMDB_ERROR_CODES[errorCode] : creditsResponse.status}`);
+          console.error(`Error fetching credits: ${creditsResponse.status}`);
           setCast([]);
         } else {
         const creditsData = await creditsResponse.json();
