@@ -26,7 +26,8 @@ const Login = () => {
     // validation the form data
     const message = checkValideData(
       email.current.value,
-      password.current.value
+      password.current.value,
+      !isSignInForm ? name.current.value : null
     );
 
     setErrorMassage(message);

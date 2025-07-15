@@ -1,4 +1,4 @@
-import { useEffect } from 'react'; // Added useEffect import
+import { useEffect, useCallback } from 'react'; // Added useEffect and useCallback imports
 import { useDispatch, useSelector } from 'react-redux';
 import { addNowPlayingMovies } from '../utils/moviesSlice';
 import { API_OPTIONS } from '../utils/constants'; // Assuming API_OPTIONS is correctly defined without Authorization header
@@ -13,7 +13,7 @@ const useNowPlayingMovies = () => {
     const dispatch = useDispatch();
     const nowPlayingMovies = useSelector((store) => store.movies.nowPlayingMovies);
 
-    const getNowPlayingMovies = async () => {
+    const getNowPlayingMovies = useCallback(async () => {
         // Check if the v3 API Key is available before making the request
         if (!TMDB_V3_API_KEY) {
             console.error("V3 TMDB API Key is missing for Now Playing Movies. Please check your .env file.");
@@ -46,7 +46,7 @@ const useNowPlayingMovies = () => {
             console.error("Error fetching now playing movies:", error);
             dispatch(addNowPlayingMovies([]));
         }
-    };
+    }, [dispatch]); // Dependencies for useCallback
 
     // Fetch movies when the component mounts, but only if not already fetched
     useEffect(() => {
@@ -54,7 +54,7 @@ const useNowPlayingMovies = () => {
         if (!nowPlayingMovies || nowPlayingMovies.length === 0) {
             getNowPlayingMovies();
         }
-    }, [nowPlayingMovies , dispatch]); // Added nowPlayingMovies and dispatch to dependency array
+    }, [nowPlayingMovies, dispatch, getNowPlayingMovies]); // Added getNowPlayingMovies to dependency array
 
     // This hook doesn't typically return anything if its main purpose is dispatching
     // return null; // Or return a loading state if you manage it here
