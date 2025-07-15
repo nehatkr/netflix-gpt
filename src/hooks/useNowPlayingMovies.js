@@ -1,65 +1,63 @@
-import { useDispatch, useSelector } from "react-redux";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey, TMDB_ERROR_CODES } from "../utils/constants";
-import { addNowPlayingMovies } from "../utils/moviesSlice";
-import { useEffect } from "react";
+import { useEffect } from 'react'; // Added useEffect import
+import { useDispatch, useSelector } from 'react-redux';
+import { addNowPlayingMovies } from '../utils/moviesSlice';
+import { API_OPTIONS } from '../utils/constants'; // Assuming API_OPTIONS is correctly defined without Authorization header
+
+// Get the V3 API Key from environment variables
+// For Create React App:
+const TMDB_V3_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
+// For Vite (if you're using Vite):
+// const TMDB_V3_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 const useNowPlayingMovies = () => {
-  const dispatch = useDispatch();
-  const nowPlayingMovies = useSelector((store) => store.movies.nowPlayingMovies);
+    const dispatch = useDispatch();
+    const nowPlayingMovies = useSelector((store) => store.movies.nowPlayingMovies);
 
-  const getNowPlayingMovies = async () => {
-    // Check if TMDB API key is configured
-    if (!checkTMDBKey()) {
-      console.error("TMDB API key not configured. Please add REACT_APP_TMDB_API_KEY to your .env file");
-      console.error("Get your API key from: https://www.themoviedb.org/settings/api");
-      dispatch(addNowPlayingMovies([]));
-      return;
-    }
-
-    try {
-      const url = buildTMDBUrl("/movie/now_playing?page=1");
-      console.log('Fetching now playing movies from:', url.replace(/api_key=[^&]+/, 'api_key=***'));
-      
-      const response = await fetch(url, API_OPTIONS);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        // Handle TMDB API specific errors
-        const errorCode = data.status_code;
-        const errorMessage = data.status_message || `HTTP ${response.status}`;
-        
-        if (errorCode && TMDB_ERROR_CODES[errorCode]) {
-          console.error(`TMDB API Error ${errorCode}: ${TMDB_ERROR_CODES[errorCode]}`);
-        } else {
-          console.error(`TMDB API Error: ${errorMessage}`);
+    const getNowPlayingMovies = async () => {
+        // Check if the v3 API Key is available before making the request
+        if (!TMDB_V3_API_KEY) {
+            console.error("V3 TMDB API Key is missing for Now Playing Movies. Please check your .env file.");
+            dispatch(addNowPlayingMovies([]));
+            return;
         }
-        
-        // Handle specific error cases
-        if (errorCode === 7 || errorCode === 24 || errorCode === 26 || errorCode === 28) {
-          console.error("Invalid API key. Please check your TMDB API key in the .env file");
-        } else if (errorCode === 25) {
-          console.error("API key has expired. Please generate a new one from TMDB");
-        } else if (errorCode === 23) {
-          console.error("Rate limit exceeded. Please wait before making more requests");
-        }
-        
-        dispatch(addNowPlayingMovies([]));
-        return;
-      }
-      
-      console.log('Now playing movies fetched successfully:', data.results?.length || 0, 'movies');
-      dispatch(addNowPlayingMovies(data.results || []));
-    } catch (error) {
-      console.error("Network error fetching now playing movies:", error.message);
-      dispatch(addNowPlayingMovies([]));
-    }
-  };
 
-  useEffect(() => {
-    if (!nowPlayingMovies) {
-      getNowPlayingMovies();
-    }
-  }, [getNowPlayingMovies, nowPlayingMovies]);
+        try {
+            const endpoint = "movie/now_playing";
+            const page = 1; // You can make this dynamic if needed
+
+            // CONSTRUCT THE URL WITH THE V3 API KEY HERE (NO PARENTHESES AFTER TMDB_V3_API_KEY)
+            const url = `https://api.themoviedb.org/3/${endpoint}?page=${page}&api_key=${TMDB_V3_API_KEY}`;
+
+            console.log("Fetching now playing movies from:", url);
+
+            const data = await fetch(url, API_OPTIONS);
+
+            if (!data.ok) {
+                const errorDetails = await data.text(); // Get more details for debugging
+                console.error(`TMDB API Error (Now Playing): ${data.status} ${data.statusText}. Details: ${errorDetails}`);
+                dispatch(addNowPlayingMovies([]));
+                return;
+            }
+
+            const json = await data.json();
+            console.log("Now playing movies fetched successfully:", json.results?.length || 0, 'movies');
+            dispatch(addNowPlayingMovies(json.results));
+        } catch (error) {
+            console.error("Error fetching now playing movies:", error);
+            dispatch(addNowPlayingMovies([]));
+        }
+    };
+
+    // Fetch movies when the component mounts, but only if not already fetched
+    useEffect(() => {
+        // Only fetch if nowPlayingMovies is empty to avoid unnecessary API calls on re-renders
+        if (!nowPlayingMovies || nowPlayingMovies.length === 0) {
+            getNowPlayingMovies();
+        }
+    }, [nowPlayingMovies , dispatch]); // Added nowPlayingMovies and dispatch to dependency array
+
+    // This hook doesn't typically return anything if its main purpose is dispatching
+    // return null; // Or return a loading state if you manage it here
 };
 
 export default useNowPlayingMovies;
