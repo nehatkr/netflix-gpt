@@ -50,6 +50,7 @@ const useMovieTrailer = (movieId) => {
             const json = await data.json();
             console.log("Raw video results:", json.results);
 
+            // Enhanced video selection logic
             const videoTypes = ['Trailer', 'Teaser', 'Clip', 'Featurette'];
             let selectedVideo = null;
 
@@ -67,8 +68,17 @@ const useMovieTrailer = (movieId) => {
                 selectedVideo = json.results.find(video => video.site === 'YouTube') || json.results[0];
             }
 
-            console.log('Movie trailer fetched successfully:', selectedVideo?.name || 'No trailer found');
-            dispatch(addTrailerVideo(selectedVideo));
+            // Add timeout for video loading
+            if (selectedVideo) {
+                console.log('Movie trailer found:', selectedVideo.name);
+                // Add a small delay to ensure proper loading
+                setTimeout(() => {
+                    dispatch(addTrailerVideo(selectedVideo));
+                }, 100);
+            } else {
+                console.warn('No suitable trailer found for movie:', movieId);
+                dispatch(addTrailerVideo(null));
+            }
         } catch (error) {
             console.error("Error fetching movie trailer:", error);
             dispatch(addTrailerVideo(null));
@@ -77,8 +87,14 @@ const useMovieTrailer = (movieId) => {
 
     useEffect(() => {
         if (movieId) {
+            // Clear previous trailer before fetching new one
             dispatch(addTrailerVideo(null));
-            getMovieVideos();
+            // Add small delay to prevent rapid API calls
+            const timer = setTimeout(() => {
+                getMovieVideos();
+            }, 200);
+            
+            return () => clearTimeout(timer);
         }
     }, [movieId, dispatch, getMovieVideos]);
 

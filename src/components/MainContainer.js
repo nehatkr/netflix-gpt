@@ -21,11 +21,14 @@ const MainContainer = () => {
         <div className="text-white text-center relative z-10 transition-all duration-500">
           <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full spinner mx-auto mb-6"></div>
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-glow-red">
-            Loading Cinematic Experience
+            Loading Movies
           </h2>
           <p className="text-gray-300 text-lg mb-6 transition-opacity duration-500">
-            Preparing your personalized movie journey...
+            Fetching movie data from TMDB...
           </p>
+          <div className="text-sm text-gray-500 mt-4">
+            <p>If this takes too long, please check your TMDB API key configuration</p>
+          </div>
           <div className="loading-dots">
             <span></span>
             <span></span>
