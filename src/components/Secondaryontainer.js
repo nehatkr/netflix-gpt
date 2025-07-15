@@ -40,7 +40,7 @@ const SecondaryContainer = () => {
           </p>
         </div>
         
-        <div className="space-y-8">
+        <div className="space-y-8 overflow-visible">
           {movies.nowPlayingMovies && (
             <div className="fade-in" style={{animationDelay: '0.1s'}}>
               <MovieList title={"🔥 Now Playing"} movies={movies.nowPlayingMovies} />

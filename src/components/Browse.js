@@ -41,7 +41,7 @@ const Browse = () => {
     }
   }, [showGptSearch, currentView]);
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden">
+    <div className="min-h-screen bg-black relative">
       <Header />
       
       {/* Home View */}
@@ -51,7 +51,7 @@ const Browse = () => {
           : currentView === 'home' && isTransitioning
           ? 'opacity-0 -translate-x-full scale-95'
           : 'opacity-0 translate-x-full scale-95 pointer-events-none'
-      }`}>
+      } overflow-y-auto`}>
         <MainContainer />
         <SecondaryContainer />
       </div>
@@ -63,7 +63,7 @@ const Browse = () => {
           : currentView === 'gpt' && isTransitioning
           ? 'opacity-0 translate-x-full scale-95'
           : 'opacity-0 -translate-x-full scale-95 pointer-events-none'
-      }`}>
+      } overflow-y-auto`}>
         <GptSearch />
       </div>
       

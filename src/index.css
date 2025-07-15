@@ -360,7 +360,8 @@ input:focus, button:focus, select:focus {
 
 /* Custom scrollbar for webkit browsers */
 .custom-scrollbar::-webkit-scrollbar {
-  height: 8px;
+  height: 6px;
+  width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -378,6 +379,23 @@ input:focus, button:focus, select:focus {
   background: linear-gradient(45deg, #ff1e2d, #d40813);
 }
 
+/* Ensure smooth scrolling for movie containers */
+.movie-scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix for mobile touch scrolling */
+@media (max-width: 768px) {
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .custom-scrollbar > div > div {
+    scroll-snap-align: start;
+  }
+}
 /* Enhanced fade in animation */
 @keyframes fadeIn {
   from { 

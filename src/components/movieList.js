@@ -35,12 +35,12 @@ const MovieList = ({ title, movies }) => {
       </div>
       
       {/* Movie cards container with enhanced scrolling */}
-      <div className="flex overflow-x-scroll scrollbar-hide custom-scrollbar pb-4 relative">
+      <div className="flex overflow-x-auto scrollbar-hide custom-scrollbar pb-4 relative" style={{scrollBehavior: 'smooth'}}>
         {/* Gradient fade on edges */}
         <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
         <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
         
-        <div className="flex gap-3 sm:gap-4 md:gap-5 px-2">
+        <div className="flex gap-3 sm:gap-4 md:gap-5 px-2 min-w-max">
           {movies?.map((movie, index) => (
             <div key={movie.id} className="fade-in-stagger" style={{animationDelay: `${index * 0.1}s`}}>
               <MovieCard 
