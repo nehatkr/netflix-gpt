@@ -7,11 +7,39 @@ const WatchLater = () => {
   const user = useSelector((store) => store.user);
   const [watchLaterList, setWatchLaterList] = useState([]);
   const [sortBy, setSortBy] = useState("dateAdded");
+  const [notification, setNotification] = useState(null);
 
   useEffect(() => {
     // Load watch later list from localStorage
     const savedList = JSON.parse(localStorage.getItem(`watchLater_${user?.uid}`)) || [];
     setWatchLaterList(savedList);
+
+    // Listen for watch later updates from movie cards
+    const handleWatchLaterUpdate = (event) => {
+      const { action, movie, totalCount } = event.detail;
+      
+      if (action === 'add') {
+        // Refresh the list
+        const updatedList = JSON.parse(localStorage.getItem(`watchLater_${user?.uid}`)) || [];
+        setWatchLaterList(updatedList);
+        
+        // Show notification
+        setNotification({
+          type: 'success',
+          message: `"${movie.title}" added to Watch Later`,
+          count: totalCount
+        });
+        
+        // Clear notification after 3 seconds
+        setTimeout(() => setNotification(null), 3000);
+      }
+    };
+
+    window.addEventListener('watchLaterUpdated', handleWatchLaterUpdate);
+    
+    return () => {
+      window.removeEventListener('watchLaterUpdated', handleWatchLaterUpdate);
+    };
   }, [user?.uid]);
 
   const removeFromWatchLater = (movieId) => {
@@ -43,6 +71,43 @@ const WatchLater = () => {
       <Header />
       
       <div className="pt-24 px-4 sm:px-6 md:px-8 lg:px-12">
+        {/* Notification Toast */}
+        {notification && (
+          <div className={`fixed top-24 right-4 z-50 p-4 rounded-lg shadow-lg border transition-all duration-300 ${
+            notification.type === 'success' 
+              ? 'bg-green-900/90 border-green-500/50 text-green-100' 
+              : 'bg-red-900/90 border-red-500/50 text-red-100'
+          } backdrop-blur-sm slide-in-right`}>
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0">
+                {notification.type === 'success' ? (
+                  <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                )}
+              </div>
+              <div>
+                <p className="font-medium">{notification.message}</p>
+                {notification.count && (
+                  <p className="text-sm opacity-75">{notification.count} movies in Watch Later</p>
+                )}
+              </div>
+              <button
+                onClick={() => setNotification(null)}
+                className="ml-4 text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Header Section */}
         <div className="mb-8 fade-in">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

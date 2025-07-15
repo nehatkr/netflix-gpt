@@ -1,10 +1,13 @@
 import { IMG_CDN_URL } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
   const navigate = useNavigate();
   const user = useSelector((store) => store.user);
+  const [isAddingToWatchLater, setIsAddingToWatchLater] = useState(false);
+  const [watchLaterStatus, setWatchLaterStatus] = useState('idle'); // 'idle', 'adding', 'success', 'error', 'duplicate'
   
   if (!posterPath) return null;
   
@@ -26,7 +29,116 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (!user) return;
+    if (!user) {
+      setWatchLaterStatus('error');
+      setTimeout(() => setWatchLaterStatus('idle'), 2000);
+      return;
+    }
+
+    if (isAddingToWatchLater) return; // Prevent multiple clicks
+
+    setIsAddingToWatchLater(true);
+    setWatchLaterStatus('adding');
+
+    try {
+      // Comprehensive movie data capture
+      const movieData = {
+        id: movieId,
+        title: title || 'Unknown Title',
+        original_title: title,
+        poster_path: posterPath,
+        vote_average: parseFloat(rating) || 0,
+        release_date: year ? `${year}-01-01` : new Date().toISOString().split('T')[0],
+        overview: '', // Could be passed as prop if available
+        genre_ids: [], // Could be passed as prop if available
+        dateAdded: new Date().toISOString(),
+        addedBy: user.uid,
+        userEmail: user.email
+      };
+
+      // Get existing watch later list
+      const watchLaterKey = `watchLater_${user.uid}`;
+      const existingList = JSON.parse(localStorage.getItem(watchLaterKey)) || [];
+      
+      // Check for duplicates
+      const isDuplicate = existingList.some(item => item.id === movieId);
+      
+      if (isDuplicate) {
+        setWatchLaterStatus('duplicate');
+        setTimeout(() => setWatchLaterStatus('idle'), 2000);
+        setIsAddingToWatchLater(false);
+        return;
+      }
+
+      // Add movie to watch later list
+      const updatedList = [movieData, ...existingList]; // Add to beginning for recent-first order
+      
+      // Store in localStorage with error handling
+      try {
+        localStorage.setItem(watchLaterKey, JSON.stringify(updatedList));
+        
+        // Dispatch custom event to update Watch Later UI
+        window.dispatchEvent(new CustomEvent('watchLaterUpdated', {
+          detail: { 
+            action: 'add', 
+            movie: movieData, 
+            totalCount: updatedList.length 
+          }
+        }));
+
+        setWatchLaterStatus('success');
+        
+        // Reset status after animation
+        setTimeout(() => {
+          setWatchLaterStatus('idle');
+        }, 2000);
+
+      } catch (storageError) {
+        console.error('Failed to save to localStorage:', storageError);
+        setWatchLaterStatus('error');
+        setTimeout(() => setWatchLaterStatus('idle'), 2000);
+      }
+
+    } catch (error) {
+      console.error('Error adding movie to watch later:', error);
+      setWatchLaterStatus('error');
+      setTimeout(() => setWatchLaterStatus('idle'), 2000);
+    } finally {
+      setIsAddingToWatchLater(false);
+    }
+  };
+
+  // Enhanced visual feedback function
+  const getWatchLaterButtonContent = () => {
+    switch (watchLaterStatus) {
+      case 'adding':
+        return <span className="text-blue-400 animate-spin">⟳</span>;
+      case 'success':
+        return <span className="text-green-400 animate-pulse">✓</span>;
+      case 'duplicate':
+        return <span className="text-yellow-400 animate-bounce">!</span>;
+      case 'error':
+        return <span className="text-red-400 animate-pulse">✗</span>;
+      default:
+        return <span className="text-white group-hover/btn:rotate-180 transition-transform duration-500">+</span>;
+    }
+  };
+
+  // Get button tooltip based on status
+  const getWatchLaterTooltip = () => {
+    switch (watchLaterStatus) {
+      case 'adding':
+        return 'Adding to Watch Later...';
+      case 'success':
+        return 'Added to Watch Later!';
+      case 'duplicate':
+        return 'Already in Watch Later';
+      case 'error':
+        return user ? 'Failed to add' : 'Please sign in';
+      default:
+        return 'Add to Watch Later';
+    }
+  };
     
     const movie = {
       id: movieId,
@@ -160,9 +272,23 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
             <button 
               className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn pointer-events-auto"
               onClick={handleAddToListClick}
-              title="Add to List"
+              title={getWatchLaterTooltip()}
+              disabled={isAddingToWatchLater}
+              className={`w-8 h-8 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 border shadow-lg group/btn pointer-events-auto ${
+                watchLaterStatus === 'success' 
+                  ? 'bg-green-500/30 border-green-400/50 hover:bg-green-500/40' 
+                  : watchLaterStatus === 'duplicate'
+                  ? 'bg-yellow-500/30 border-yellow-400/50 hover:bg-yellow-500/40'
+                  : watchLaterStatus === 'error'
+                  ? 'bg-red-500/30 border-red-400/50 hover:bg-red-500/40'
+                  : watchLaterStatus === 'adding'
+                  ? 'bg-blue-500/30 border-blue-400/50'
+                  : 'bg-white/20 border-white/30 hover:bg-white/30'
+              } ${isAddingToWatchLater ? 'cursor-not-allowed' : 'cursor-pointer'}`}
             >
-              <span className="text-white text-xs group-hover/btn:rotate-180 transition-transform duration-500">+</span>
+              <span className="text-xs">
+                {getWatchLaterButtonContent()}
+              </span>
             </button>
             <button 
               className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn pointer-events-auto"
