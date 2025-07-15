@@ -4,32 +4,12 @@ export const USER_AVATAR =
   "https://occ-0-4345-3647.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABXz4LMjJFidX8MxhZ6qro8PBTjmHbxlaLAbk45W1DXbKsAIOwyHQPiMAuUnF1G24CLi7InJHK4Ge4jkXul1xIW49Dr5S7fc.png?r=e6e";
 
 // TMDB API configuration with proper Bearer token format
-// export const API_OPTIONS = {
-//   method: "GET",
-//   headers: {
-//     accept: "application/json",
-//     Authorization: "Bearer" + process.env.REACT_APP_TMDB_ACCESS_TOKEN,
-//   },
-// };
-
 export const API_OPTIONS = {
-    method: "GET",
-    headers: {
-        accept: "application/json",
-        // REMOVE THIS LINE:
-        // Authorization: "Bearer " + process.env.REACT_APP_TMDB_ACCESS_TOKEN,
-    },
-};
-
-// Debug function to check if API key is available
-export const checkTMDBKey = () => {
-  const key = process.env.REACT_APP_TMDB_API_KEY;
-  if (!key) {
-    console.error('TMDB API key is missing or not configured properly');
-    return false;
-  }
-  console.log('TMDB API key is configured');
-  return true;
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    Authorization: "Bearer " + process.env.REACT_APP_TMDB_ACCESS_TOKEN,
+  },
 };
 
 // Helper function to build TMDB URLs
@@ -116,5 +96,3 @@ export const SUPPORTED_LANGUAGES = [
   {identifier: "mt", name: "Malti (Maltese)"},
   {identifier: "mk", name: "Македонски (Macedonian)"}
 ];
-
-export const OPENAI_KEY = process.env.REACT_APP_TMDB_API_KEY;

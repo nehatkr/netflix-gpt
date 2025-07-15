@@ -203,7 +203,6 @@ const Header = () => {
                         setShowUserMenu(false);
                       }
                       }
-                      className="w-full text-left px-4 py-3 text-white hover:bg-white/10 rounded-xl transition-all duration-300 flex items-center gap-3 group hover:scale-105 hover:shadow-lg cursor-pointer"
                       className="w-full text-left px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all duration-300 flex items-center gap-3 group hover:scale-105"
                     >
                       <div className="text-red-400 group-hover:text-red-300 transition-colors duration-300">
