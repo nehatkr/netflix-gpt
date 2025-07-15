@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey, TMDB_ERROR_CODES } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, checkTMDBKey } from "../utils/constants";
 import Header from "./Header";
 import MoviesList from "./movieList";
 
@@ -67,14 +67,9 @@ const MovieRecommendations = () => {
             results[category] = data.results?.slice(0, 20) || [];
           } else {
             const errorData = await response.json().catch(() => ({}));
-            const errorCode = errorData.status_code;
             const errorMessage = errorData.status_message || `HTTP ${response.status}`;
             
-            if (errorCode && TMDB_ERROR_CODES[errorCode]) {
-              console.error(`TMDB API Error for ${category} - ${errorCode}: ${TMDB_ERROR_CODES[errorCode]}`);
-            } else {
-              console.error(`TMDB API Error for ${category}: ${errorMessage}`);
-            }
+            console.error(`TMDB API Error for ${category}: ${errorMessage}`);
             results[category] = [];
           }
         } catch (error) {
