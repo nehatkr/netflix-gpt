@@ -3,13 +3,7 @@
 import { useEffect, useCallback } from 'react'; // Import useCallback
 import { useDispatch, useSelector } from 'react-redux';
 import { addTrailerVideo} from '../utils/moviesSlice'; // VERIFY THIS PATH IF STILL GETTING MODULE NOT FOUND
-import { API_OPTIONS } from '../utils/constants';
-
-// Get the V3 API Key from environment variables
-// For Create React App:
-const TMDB_V3_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
-// For Vite (if you're using Vite):
-// const TMDB_V3_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+import { API_OPTIONS, buildTMDBUrl } from '../utils/constants';
 
 const useMovieTrailer = (movieId) => {
     const dispatch = useDispatch();
@@ -17,13 +11,6 @@ const useMovieTrailer = (movieId) => {
 
     // Wrap getMovieVideos in useCallback
     const getMovieVideos = useCallback(async () => {
-        // Add a check to ensure the v3 API Key is available
-        if (!TMDB_V3_API_KEY) {
-            console.error("V3 TMDB API Key is missing for Movie Trailer. Please check your .env file.");
-            dispatch(addTrailerVideo(null));
-            return;
-        }
-
         // Add a check for movieId to prevent malformed URLs
         if (!movieId) {
             console.warn("Movie ID is missing for trailer fetch. Skipping.");
@@ -32,9 +19,7 @@ const useMovieTrailer = (movieId) => {
         }
 
         try {
-            // CONSTRUCT THE URL WITH THE V3 API KEY HERE
-            // Ensure `api_key=${TMDB_V3_API_KEY}` is appended correctly
-            const url = `https://api.themoviedb.org/3/movie/${movieId}/videos?language=en-US&api_key=${TMDB_V3_API_KEY}`;
+            const url = buildTMDBUrl(`/movie/${movieId}/videos?language=en-US`);
 
             console.log("Fetching movie trailer from:", url); // Log the exact URL being used
 

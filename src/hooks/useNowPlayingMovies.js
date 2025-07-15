@@ -1,32 +1,18 @@
 import { useEffect, useCallback } from 'react'; // Added useEffect and useCallback imports
 import { useDispatch, useSelector } from 'react-redux';
 import { addNowPlayingMovies } from '../utils/moviesSlice';
-import { API_OPTIONS } from '../utils/constants'; // Assuming API_OPTIONS is correctly defined without Authorization header
-
-// Get the V3 API Key from environment variables
-// For Create React App:
-const TMDB_V3_API_KEY = process.env.REACT_APP_TMDB_API_KEY;
-// For Vite (if you're using Vite):
-// const TMDB_V3_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+import { API_OPTIONS, buildTMDBUrl } from '../utils/constants';
 
 const useNowPlayingMovies = () => {
     const dispatch = useDispatch();
     const nowPlayingMovies = useSelector((store) => store.movies.nowPlayingMovies);
 
     const getNowPlayingMovies = useCallback(async () => {
-        // Check if the v3 API Key is available before making the request
-        if (!TMDB_V3_API_KEY) {
-            console.error("V3 TMDB API Key is missing for Now Playing Movies. Please check your .env file.");
-            dispatch(addNowPlayingMovies([]));
-            return;
-        }
-
         try {
             const endpoint = "movie/now_playing";
             const page = 1; // You can make this dynamic if needed
 
-            // CONSTRUCT THE URL WITH THE V3 API KEY HERE (NO PARENTHESES AFTER TMDB_V3_API_KEY)
-            const url = `https://api.themoviedb.org/3/${endpoint}?page=${page}&api_key=${TMDB_V3_API_KEY}`;
+            const url = buildTMDBUrl(`/${endpoint}?page=${page}`);
 
             console.log("Fetching now playing movies from:", url);
 

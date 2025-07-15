@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl } from "../utils/constants";
 import Header from "./Header";
 import MoviesList from "./movieList";
 
@@ -32,14 +32,6 @@ const MovieRecommendations = () => {
 
   const fetchRecommendations = useCallback(async () => {
     setLoading(true);
-    
-    // Check if TMDB API key is configured
-    if (!checkTMDBKey()) {
-      console.error("TMDB API key not configured. Please add REACT_APP_TMDB_API_KEY to your .env file");
-      console.error("Get your API key from: https://www.themoviedb.org/settings/api");
-      setLoading(false);
-      return;
-    }
     
     try {
       const recommendationCategories = {
