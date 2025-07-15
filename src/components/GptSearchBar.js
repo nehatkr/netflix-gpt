@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import lang from "../utils/languageConstants";
 import { useDispatch, useSelector } from "react-redux";
 import openai from "../utils/openai";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey,  } from "../utils/constants";
+import { API_OPTIONS } from "../utils/constants";
 import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
@@ -13,47 +13,17 @@ const GptSearchBar = () => {
 
   // search movies in TMDB
   const searchMovieTMDB = async (movie) => {
-    // Check if TMDB API key is configured
-    if (!checkTMDBKey()) {
-      console.error("TMDB API key not configured. Please add REACT_APP_TMDB_API_KEY to your .env file");
-      console.error("Get your API key from: https://www.themoviedb.org/settings/api");
-      return [];
-    }
-
     try {
-      const url = buildTMDBUrl(`/search/movie?query=${encodeURIComponent(movie)}&include_adult=false&language=en-US&page=1`);
-      console.log('Searching movie in TMDB:', url.replace(/api_key=[^&]+/, 'api_key=***'));
-      
-      const response = await fetch(url, API_OPTIONS);
-      const data = await response.json();
-      
-      if (!response.ok) {
-        // Handle TMDB API specific errors
-        const errorCode = data.status_code;
-        const errorMessage = data.status_message || `HTTP ${response.status}`;
-        
-        if (errorCode && TMDB_ERROR_CODES[errorCode]) {
-          console.error(`TMDB API Error ${errorCode}: ${TMDB_ERROR_CODES[errorCode]}`);
-        } else {
-          console.error(`TMDB API Error: ${errorMessage}`);
-        }
-        
-        // Handle specific error cases
-        if (errorCode === 7 || errorCode === 24 || errorCode === 26 || errorCode === 28) {
-          console.error("Invalid API key. Please check your TMDB API key in the .env file");
-        } else if (errorCode === 25) {
-          console.error("API key has expired. Please generate a new one from TMDB");
-        } else if (errorCode === 23) {
-          console.error("Rate limit exceeded. Please wait before making more requests");
-        }
-        
-        return [];
-      }
-      
-      console.log(`Movie search for "${movie}" found ${data.results?.length || 0} results`);
-      return data.results || [];
+      const data = await fetch(
+        "https://api.themoviedb.org/3/search/movie?query=" +
+          movie +
+          "&include_adult=false&language=en-US&page=1",
+        API_OPTIONS
+      );
+      const json = await data.json();
+      return json.results;
     } catch (error) {
-      console.error("Network error searching movie in TMDB:", error);
+      console.error("Error searching movie in TMDB:", error);
       return [];
     }
   };
@@ -86,7 +56,7 @@ const GptSearchBar = () => {
         const gptQuery =
           "Act as a Movies Recommendation system and suggest some movies for the query: " +
           searchText.current.value +
-          ". Only give me names of 5 movies, comma separated like the example result given ahead. Example Results: Gadar, Sholay, Don, Golmaal, Koi Mil Gaya";
+          "only give me names of 5 movies, comma seperated like the example result given ahead .Example Results: Gadar, Sholay , Don , Golmaal , koi mil Gaya ";
 
         const gptResults = await openai.chat.completions.create({
           messages: [{ role: "user", content: gptQuery }],
