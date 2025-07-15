@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import lang from "../utils/languageConstants";
 import { useDispatch, useSelector } from "react-redux";
 import openai from "../utils/openai";
-import { API_OPTIONS, buildTMDBUrl, checkTMDBKey, TMDB_ERROR_CODES } from "../utils/constants";
+import { API_OPTIONS, buildTMDBUrl, checkTMDBKey,  } from "../utils/constants";
 import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
