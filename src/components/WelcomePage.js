@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { LOGO } from "../utils/constants";
 
@@ -13,6 +14,14 @@ const WelcomePage = () => {
     "Your Cinematic Journey Begins",
     "Discover. Watch. Enjoy."
   ];
+
+  const handleGetStarted = useCallback(() => {
+    navigate("/login");
+  }, [navigate]);
+
+  const handleSkip = useCallback(() => {
+    navigate("/login");
+  }, [navigate]);
 
   useEffect(() => {
     // Show content after initial load
@@ -35,13 +44,6 @@ const WelcomePage = () => {
     };
   }, [handleGetStarted, welcomeTexts.length]);
 
-  const handleGetStarted = () => {
-    navigate("/login");
-  };
-
-  const handleSkip = () => {
-    navigate("/login");
-  };
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden welcome-page">
