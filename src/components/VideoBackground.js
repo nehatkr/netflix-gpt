@@ -54,7 +54,7 @@ const VideoBackground = ({ movieId }) => {
           className="w-screen aspect-video scale-125 sm:scale-110 md:scale-100 transition-all duration-700 ease-out"
           src={`https://www.youtube.com/embed/${trailerVideo?.key}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&loop=1&playlist=${trailerVideo?.key}&start=0&enablejsapi=1&origin=${window.location.origin}`}
           title="Movie Trailer"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           referrerPolicy="strict-origin-when-cross-origin"
           loading="eager"
         ></iframe>
