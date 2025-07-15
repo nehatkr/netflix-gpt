@@ -117,4 +117,4 @@ export const SUPPORTED_LANGUAGES = [
   {identifier: "mk", name: "Македонски (Macedonian)"}
 ];
 
-export const OPENAI_KEY = process.env.REACT_APP_TMDB_API_KEY;
+export const OPENAI_KEY = process.env.REACT_APP_OPENAI_KEY;
