@@ -233,7 +233,8 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
           />
           
           {/* Shimmer effect on hover */}
-          <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+          <div className="absolute inset-0 shimmer opacity              }
+-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         </div>
         
         {/* Gradient overlay */}
@@ -272,23 +273,9 @@ const MovieCard = ({ posterPath, title, rating, year, movieId }) => {
             <button 
               className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn pointer-events-auto"
               onClick={handleAddToListClick}
-              title={getWatchLaterTooltip()}
-              disabled={isAddingToWatchLater}
-              className={`w-8 h-8 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 border shadow-lg group/btn pointer-events-auto ${
-                watchLaterStatus === 'success' 
-                  ? 'bg-green-500/30 border-green-400/50 hover:bg-green-500/40' 
-                  : watchLaterStatus === 'duplicate'
-                  ? 'bg-yellow-500/30 border-yellow-400/50 hover:bg-yellow-500/40'
-                  : watchLaterStatus === 'error'
-                  ? 'bg-red-500/30 border-red-400/50 hover:bg-red-500/40'
-                  : watchLaterStatus === 'adding'
-                  ? 'bg-blue-500/30 border-blue-400/50'
-                  : 'bg-white/20 border-white/30 hover:bg-white/30'
-              } ${isAddingToWatchLater ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+              title="Add to List"
             >
-              <span className="text-xs">
-                {getWatchLaterButtonContent()}
-              </span>
+              <span className="text-white text-xs group-hover/btn:rotate-180 transition-transform duration-500">+</span>
             </button>
             <button 
               className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 transform hover:scale-110 border border-white/30 shadow-lg group/btn pointer-events-auto"
